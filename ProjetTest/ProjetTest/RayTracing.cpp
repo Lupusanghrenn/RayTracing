@@ -36,7 +36,7 @@ std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 	}
 }
 
-void RayTracing::recursiviteRay(std::vector<Sphere> tabSphere, std::vector<Lumiere> tabLumiere, Rayon ray) {
+Vec3<float> RayTracing::recursiviteRay(std::vector<Sphere> tabSphere, std::vector<Lumiere> tabLumiere, Rayon ray) {
 	// on renvoie float t ou directement la couleur ?
 }
 
