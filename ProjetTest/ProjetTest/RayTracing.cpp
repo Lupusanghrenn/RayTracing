@@ -4,6 +4,7 @@
 #include <iostream> 
 #include <algorithm> 
 #include <vector>
+#include <random>
 
 std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 	float a = 1.f;
@@ -60,7 +61,9 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L2);
 	//cornellBox
 	//tabSphere.push_back(Sphere(Vec3<float>{-1000.f, 300.f, 300.f}, 1000.f));
-	
+
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(-tailleCube / 2, tailleCube / 2);	
 
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
@@ -92,9 +95,9 @@ void RayTracing::draw600600() {
 					//lumiere surfacique
 					Vec3<float> finalLight = Vec3<float>{ 0.f, 0.f, 0.f };
 					for (int iLampe = 0; iLampe < nbRayonRandom; iLampe++) {
-						float randomx = std::rand() % tailleCube - tailleCube / 2;
-						float randomy = std::rand() % tailleCube - tailleCube / 2;
-						float randomz = std::rand() % tailleCube - tailleCube / 2;
+						float randomx = distribution(generator);  // generates number in the range 1..6 ;
+						float randomy = distribution(generator);  // generates number in the range 1..6 ;
+						float randomz = distribution(generator);
 						Vec3<float> posLampeSurf = tabLumiere[indexLight].position;
 						posLampeSurf.x += randomx;
 						posLampeSurf.y += randomy;
