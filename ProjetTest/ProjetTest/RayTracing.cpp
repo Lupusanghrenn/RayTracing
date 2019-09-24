@@ -36,6 +36,10 @@ std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 	}
 }
 
+void RayTracing::recursiviteRay(std::vector<Sphere> tabSphere, std::vector<Lumiere> tabLumiere, Rayon ray) {
+	// on renvoie float t ou directement la couleur ?
+}
+
 void RayTracing::draw600600() {
 	//On cree une image de 600 par 600 avec trace de rayon
 	int nH = 600, nW = 600;
@@ -133,7 +137,7 @@ void RayTracing::draw600600() {
 
 	//Creation de l image
 	//boucle de convertion
-	std::cout << "ALLO";
+	std::cout << "Generation du fichier";
 	ppm.save("image.ppm");
 	
 }

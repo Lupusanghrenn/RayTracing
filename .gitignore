@@ -10,3 +10,13 @@ ProjetTest/ProjetTest/img/
 ProjetTest/ProjetTest/x64/Debug/
 
 ProjetTest/UnitTestSyntheseImg/Debug/
+
+ProjetTest/ProjetTest/Release/ProjetTest.log
+
+*.obj
+
+*.tlog
+
+ProjetTest/Release/
+
+*.pdb
