@@ -50,7 +50,7 @@ void RayTracing::draw600600() {
 	Sphere S(Vec3<float>{300.f, 300.f, 250.f},150.f);
 	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f);
 	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f);
-	Lumiere L(Vec3<float>{0.f, 0.f, 100.f}, 0.9f, 0.1f, 0.1f,	 30000000);
+	Lumiere L(Vec3<float>{10.f, 10.f, 100.f}, 0.9f, 0.1f, 0.1f,	 30000000);
 	Lumiere L2(Vec3<float>{500.f, 0.f, 100.f}, 0.1f, 0.1f, 0.9f, 30000000);
 	int tailleCube = 30;
 	int nbRayonRandom=100;
@@ -60,7 +60,7 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L);
 	tabLumiere.push_back(L2);
 	//cornellBox
-	//tabSphere.push_back(Sphere(Vec3<float>{-1000.f, 300.f, 300.f}, 1000.f));
+	tabSphere.push_back(Sphere(Vec3<float>{-30000.f, 000.f, 000.f}, 18000.f));
 
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> distribution(-tailleCube / 2, tailleCube / 2);	
