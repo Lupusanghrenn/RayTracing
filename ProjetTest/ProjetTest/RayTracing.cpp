@@ -38,6 +38,7 @@ std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 
 Vec3<float> RayTracing::recursiviteRay(std::vector<Sphere> tabSphere, std::vector<Lumiere> tabLumiere, Rayon ray) {
 	// on renvoie float t ou directement la couleur ?
+	return Vec3<float>{0.f,0.f,0.f};
 }
 
 void RayTracing::draw600600() {
@@ -57,6 +58,9 @@ void RayTracing::draw600600() {
 	tabSphere.push_back(S3);
 	tabLumiere.push_back(L);
 	tabLumiere.push_back(L2);
+	//cornellBox
+	//tabSphere.push_back(Sphere(Vec3<float>{-1000.f, 300.f, 300.f}, 1000.f));
+	
 
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
