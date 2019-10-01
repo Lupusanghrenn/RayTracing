@@ -47,10 +47,10 @@ void RayTracing::draw600600() {
 	int nH = 600, nW = 600;
 	std::vector<Sphere> tabSphere;
 	std::vector<Lumiere> tabLumiere;
-	Sphere S(Vec3<float>{300.f, 300.f, 250.f},150.f,Albedo(0.5f));
+	Sphere S(Vec3<float>{100.f, 300.f, 250.f},100.f,Albedo(0.5f));
 	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f, Albedo(0.5f));
 	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f, Albedo(0.5f));
-	Lumiere L(Vec3<float>{100.f, 100.f, 100.f}, 0.7f, 0.7f, 0.7f,	30000000);
+	Lumiere L(Vec3<float>{300.f, 300.f, 100.f}, 0.7f, 0.7f, 0.7f,	30000000);
 	Lumiere L2(Vec3<float>{500.f, 100.f, 100.f}, 0.1f, 0.1f, 0.9f,	30000000);
 	float tailleCube = 30.f;
 	int nbRayonRandom=100;
@@ -58,13 +58,13 @@ void RayTracing::draw600600() {
 	tabSphere.push_back(S2);
 	tabSphere.push_back(S3);
 	tabLumiere.push_back(L);
-	tabLumiere.push_back(L2);
+	//tabLumiere.push_back(L2);
 	//cornellBox
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 30500.f}, 30000.f,Albedo(),Couleur (1.f,0.f,0.f)));//fond
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, 30600.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
-	//tabSphere.push_back(Sphere(Vec3<float>{300.f, -30600.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 0.f, 1.f)));//gauche
-	tabSphere.push_back(Sphere(Vec3<float>{30600.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//bas
-	//tabSphere.push_back(Sphere(Vec3<float>{-30600.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//haut
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, -30000.f, 0.f}, 30000.f, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
+	tabSphere.push_back(Sphere(Vec3<float>{30600.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
+	tabSphere.push_back(Sphere(Vec3<float>{-30000.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(1.f, 1.f, 0.f)));//haut
 
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
@@ -100,10 +100,11 @@ void RayTracing::draw600600() {
 				//lancer de rayon jusqu a la lumiere
 				Vec3<float> impact = R.origin + t * R.direction;//position du point d intersection
 
-				for (int indexLight = 0; indexLight < tabLumiere.size(); indexLight++) {
+				//lumiere surfacique
+				Vec3<float> finalLight = Vec3<float>{ 0.f, 0.f, 0.f };
 
-					//lumiere surfacique
-					Vec3<float> finalLight = Vec3<float>{ 0.f, 0.f, 0.f };
+				for (int indexLight = 0; indexLight < tabLumiere.size(); indexLight++) {
+					
 					for (int iLampe = 0; iLampe < nbRayonRandom; iLampe++) {
 						float randomx = distribution(generator);  // generates number in the range 1..6 ;
 						float randomy = distribution(generator);  // generates number in the range 1..6 ;
@@ -124,11 +125,11 @@ void RayTracing::draw600600() {
 
 							auto res2 = RayTracing::intersect(reflect, tabSphere[index]);
 							float res2Value = res2.value_or(-1.f);
-							if (res2Value > bestResult && res2Value > -1.f) {
+							if (res2Value < bestResult && res2Value >= 0.f) {
 								bestResult = res2Value;
 							}
 						}
-						if (bestResult < 0.f) {
+						if (bestResult < 0.f && bestResult<norm(light)) {
 							//On as pas de sphere qui gene notre oeil
 							float norme = norm(light);
 							Vec3<float> normal = impact - tabSphere[indexClosest].centre;
@@ -142,11 +143,12 @@ void RayTracing::draw600600() {
 							finalLight = finalLight + (lumSurfFactor * diffuse * (float)tabLumiere[indexLight].intensity * tabLumiere[indexLight].color);
 						}
 					}
-					//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
-					finalLight = finalLight * tabSphere[indexClosest].color.color;
-					Vector3<int> pixelMat = Vector3<int>(std::clamp(ppm.pixelMatrix[i][j].x + (int)finalLight.x, 0, 255), std::clamp(ppm.pixelMatrix[i][j].y + (int)finalLight.y, 0, 255), std::clamp(ppm.pixelMatrix[i][j].z + (int)finalLight.z, 0, 255));
-					ppm.pixelMatrix[i][j] = pixelMat;
-				}		
+				}
+				//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
+				finalLight = finalLight * tabSphere[indexClosest].color.color;
+				Vector3<int> pixelMat = Vector3<int>(std::clamp(ppm.pixelMatrix[i][j].x + (int)finalLight.x, 0, 255), std::clamp(ppm.pixelMatrix[i][j].y + (int)finalLight.y, 0, 255), std::clamp(ppm.pixelMatrix[i][j].z + (int)finalLight.z, 0, 255));
+				ppm.pixelMatrix[i][j] = pixelMat;
+						
 			}
 			else {
 				ppm.pixelMatrix[i][j] = Vector3<int>(0, 0, 0);
