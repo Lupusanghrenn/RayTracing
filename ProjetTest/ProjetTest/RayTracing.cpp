@@ -46,9 +46,9 @@ std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 	}
 }
 
-Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
+Vec3<float> kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 	if (profondeur > 5) {
-		return Vector3<int>(0, 0, 0);
+		return Vec3<float>{0.f, 0.f, 0.f};
 	}
 	float t = -1.f;
 	int indexClosest = -1;
@@ -78,7 +78,7 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		}
 
 		//lumieres indirecte
-		Vector3<int> indirectLight = Vector3<int>{ 0, 0, 0 };
+		Vec3<float> indirectLight = Vec3<float>{ 0.f, 0.f, 0.f };
 
 		for (int nbVecteurIndirect = 0; nbVecteurIndirect < nbMaxVecteurIndirect; nbVecteurIndirect++) {
 			/*float random1 = distribution01(generator);
@@ -97,7 +97,7 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 			normalize(normale);
 			impact = impact + 0.01 * normale;//on évité l'acnée
 			Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
-			Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale;//R = 2*N*(-I.N)+I
+			Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
 			normalize(reflectDirection);
 			Rayon reflect = Rayon(impact, reflectDirection);
 			indirectLight = indirectLight + kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
@@ -152,12 +152,11 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		}
 		//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
 		finalLight = finalLight * tabSphere[indexClosest].color.color;
-		Vector3<int> pixelMat = Vector3<int>(std::clamp((int)finalLight.x, 0, 255), std::clamp((int)finalLight.y, 0, 255), std::clamp((int)finalLight.z, 0, 255));
-		return pixelMat + indirectLight;
+		return finalLight + 0.1f*indirectLight;
 
 	}
 	else {
-		return Vector3<int>(0, 0, 0);
+		return Vec3<float>{0.f, 0.f, 0.f};
 	}
 }
 
@@ -199,7 +198,9 @@ void RayTracing::draw600600() {
 			Vec3<float> directionRayon = Vec3<float>{ (float)i, (float)j, 0.f } -pointCamera;
 			normalize(directionRayon);
 			Rayon ray(Vec3<float>{(float)i, (float)j, 0.f}, directionRayon);
-			ppm.pixelMatrix[i][j] = kesseKisePazeOBouDutRaillon(ray,0);
+			Vec3<float> finalLight = kesseKisePazeOBouDutRaillon(ray, 0);
+			ppm.pixelMatrix[i][j] = Vector3<int>(std::clamp((int)finalLight.x, 0, 255), std::clamp((int)finalLight.y, 0, 255), std::clamp((int)finalLight.z, 0, 255));
+			 
 		}
 	}
 
