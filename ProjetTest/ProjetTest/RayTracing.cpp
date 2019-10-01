@@ -60,11 +60,12 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L);
 	//tabLumiere.push_back(L2);
 	//cornellBox
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 30500.f}, 30000.f,Albedo(),Couleur (1.f,0.f,0.f)));//fond
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 30600.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, -30000.f, 0.f}, 30000.f, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
-	tabSphere.push_back(Sphere(Vec3<float>{30600.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
-	tabSphere.push_back(Sphere(Vec3<float>{-30000.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(1.f, 1.f, 0.f)));//haut
+	float R = 30000.f;
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, R+500.f}, R,Albedo(),Couleur (1.f,0.f,0.f)));//fond
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, R+600.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, -R, 0.f}, R, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
+	tabSphere.push_back(Sphere(Vec3<float>{R+600.f, 300.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
+	tabSphere.push_back(Sphere(Vec3<float>{-R, 300.f, 0.f}, R, Albedo(), Couleur(1.f, 1.f, 0.f)));//haut
 
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
@@ -78,7 +79,6 @@ void RayTracing::draw600600() {
 	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)
 	{
-		#pragma omp parallel for
 		for (int j = 0; j < nW; j++)
 		{
 			//camera ortho
@@ -125,11 +125,14 @@ void RayTracing::draw600600() {
 
 							auto res2 = RayTracing::intersect(reflect, tabSphere[index]);
 							float res2Value = res2.value_or(-1.f);
+							if (bestResult == -1.f) {
+								bestResult = res2Value;
+							}
 							if (res2Value < bestResult && res2Value >= 0.f) {
 								bestResult = res2Value;
 							}
 						}
-						if (bestResult < 0.f && bestResult<norm(light)) {
+						if (bestResult < 0.f || bestResult>norm(light)) {
 							//On as pas de sphere qui gene notre oeil
 							float norme = norm(light);
 							Vec3<float> normal = impact - tabSphere[indexClosest].centre;
