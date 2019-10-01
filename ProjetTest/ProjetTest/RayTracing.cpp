@@ -66,7 +66,8 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 			normalize(normale);
 			impact = impact + 0.01 * normale;//on évité l'acnée
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
-			Vec3<float> reflectDirection=dot(ray.direction,normale)* 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
+			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
+			normalize(reflectDirection);
 			Rayon reflect = Rayon(impact, reflectDirection);
 			return kesseKisePazeOBouDutRaillon(reflect);
 		}
@@ -146,7 +147,7 @@ void RayTracing::draw600600() {
 	//cornellBox
 	float R = 30000.f;
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, R + 500.f}, R, Albedo(), Couleur(1.f, 0.f, 0.f)));//fond
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, -R +00.f}, R, Albedo(), Couleur(1.f, 0.f, 0.f)));//devant
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, -R +00.f}, R, Albedo(), Couleur(0.1f, 0.1f, 0.1f)));//devant
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, R + 600.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, -R, 0.f}, R, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
 	tabSphere.push_back(Sphere(Vec3<float>{R + 600.f, 300.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
