@@ -60,7 +60,7 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L);
 	tabLumiere.push_back(L2);
 	//cornellBox
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 110000.f}, 110000.f-600.f,Albedo()));
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 110000.f}, 110000.f-600.f,Albedo(),Couleur (1.f,0.f,0.f)));
 
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
@@ -133,6 +133,7 @@ void RayTracing::draw600600() {
 						}
 					}
 					//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
+					finalLight = finalLight * tabSphere[indexClosest].color.color;
 					Vector3<int> pixelMat = Vector3<int>(std::clamp(ppm.pixelMatrix[i][j].x + (int)finalLight.x, 0, 255), std::clamp(ppm.pixelMatrix[i][j].y + (int)finalLight.y, 0, 255), std::clamp(ppm.pixelMatrix[i][j].z + (int)finalLight.z, 0, 255));
 					ppm.pixelMatrix[i][j] = pixelMat;
 				}		
