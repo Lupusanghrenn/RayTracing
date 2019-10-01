@@ -50,8 +50,8 @@ void RayTracing::draw600600() {
 	Sphere S(Vec3<float>{300.f, 300.f, 250.f},150.f,Albedo(0.5f));
 	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f, Albedo(0.5f));
 	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f, Albedo(0.5f));
-	Lumiere L(Vec3<float>{10.f, 10.f, 100.f}, 0.9f, 0.1f, 0.1f,	 30000000);
-	Lumiere L2(Vec3<float>{500.f, 0.f, 100.f}, 0.1f, 0.1f, 0.9f, 30000000);
+	Lumiere L(Vec3<float>{100.f, 100.f, 100.f}, 0.7f, 0.7f, 0.7f,	30000000);
+	Lumiere L2(Vec3<float>{500.f, 100.f, 100.f}, 0.1f, 0.1f, 0.9f,	30000000);
 	float tailleCube = 30.f;
 	int nbRayonRandom=100;
 	tabSphere.push_back(S);
@@ -60,13 +60,17 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L);
 	tabLumiere.push_back(L2);
 	//cornellBox
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 110000.f}, 110000.f-600.f,Albedo(),Couleur (1.f,0.f,0.f)));
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 30500.f}, 30000.f,Albedo(),Couleur (1.f,0.f,0.f)));//fond
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 30600.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
+	//tabSphere.push_back(Sphere(Vec3<float>{300.f, -30600.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 0.f, 1.f)));//gauche
+	tabSphere.push_back(Sphere(Vec3<float>{30600.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//bas
+	//tabSphere.push_back(Sphere(Vec3<float>{-30600.f, 300.f, 0.f}, 30000.f, Albedo(), Couleur(0.f, 1.f, 0.f)));//haut
 
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
 
 	//Camera ortho
-	Vec3<float> pointCamera = Vec3<float>{ 300.f, 300.f, -10000.f };
+	Vec3<float> pointCamera = Vec3<float>{ 300.f, 300.f, -450.f };
 
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
@@ -74,7 +78,7 @@ void RayTracing::draw600600() {
 	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)
 	{
-		
+		#pragma omp parallel for
 		for (int j = 0; j < nW; j++)
 		{
 			//camera ortho
