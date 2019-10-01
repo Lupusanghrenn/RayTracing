@@ -65,6 +65,9 @@ void RayTracing::draw600600() {
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
 
+	//Camera ortho
+	Vec3<float> pointCamera = Vec3<float>{ 300.f, 300.f, -10000.f };
+
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
 
@@ -74,7 +77,10 @@ void RayTracing::draw600600() {
 		
 		for (int j = 0; j < nW; j++)
 		{
-			Rayon R(Vec3<float>{(float)i, (float)j, 0.f}, Vec3<float>{0.f, 0.f, 1.f});
+			//camera ortho
+			Vec3<float> directionRayon = Vec3<float>{ (float)i, (float)j, 0.f } -pointCamera;
+			normalize(directionRayon);
+			Rayon R(Vec3<float>{(float)i, (float)j, 0.f}, directionRayon);
 			float t = -1.f;
 			int indexClosest = -1;
 			for (int index = 0; index < tabSphere.size(); index++) {
