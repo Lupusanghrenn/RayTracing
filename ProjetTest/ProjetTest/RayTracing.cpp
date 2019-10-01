@@ -9,9 +9,11 @@
 float tailleCube = 30.f;
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);
+std::uniform_real_distribution<float> distribution01(0.f, 1.f);
 int nbRayonRandom = 100;
 std::vector<Sphere> tabSphere;
 std::vector<Lumiere> tabLumiere;
+int nbMaxVecteurIndirect = 1;
 
 std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 	float a = 1.f;
@@ -44,7 +46,10 @@ std::optional<float> RayTracing::intersect(Rayon R, Sphere S) {
 	}
 }
 
-Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
+Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
+	if (profondeur > 5) {
+		return Vector3<int>(0, 0, 0);
+	}
 	float t = -1.f;
 	int indexClosest = -1;
 	for (int index = 0; index < tabSphere.size(); index++) {
@@ -69,7 +74,33 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
 			normalize(reflectDirection);
 			Rayon reflect = Rayon(impact, reflectDirection);
-			return kesseKisePazeOBouDutRaillon(reflect);
+			return kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
+		}
+
+		//lumieres indirecte
+		Vector3<int> indirectLight = Vector3<int>{ 0, 0, 0 };
+
+		for (int nbVecteurIndirect = 0; nbVecteurIndirect < nbMaxVecteurIndirect; nbVecteurIndirect++) {
+			/*float random1 = distribution01(generator);
+			float random2 = distribution01(generator);
+
+			float phi = 2 * std::_Pi * random1;
+			float theta = std::acos(random2);
+
+			float x = std::cos(2 * std::_Pi * random1) * std::sqrt((1 - random2) * (1 - random2));
+			float x = std::sin(2 * std::_Pi * random1) * std::sqrt((1 - random2) * (1 - random2));
+			float z = random2;*/
+
+			//ok on fait le meme rayon que si on faisait du mirroir pour faire les lumières on fera les projections en hémisphere 
+
+			Vec3<float> normale = impact - tabSphere[indexClosest].centre;
+			normalize(normale);
+			impact = impact + 0.01 * normale;//on évité l'acnée
+			Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
+			Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale;//R = 2*N*(-I.N)+I
+			normalize(reflectDirection);
+			Rayon reflect = Rayon(impact, reflectDirection);
+			indirectLight = indirectLight + kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
 		}
 
 		//lumiere surfacique
@@ -122,7 +153,7 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 		//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
 		finalLight = finalLight * tabSphere[indexClosest].color.color;
 		Vector3<int> pixelMat = Vector3<int>(std::clamp((int)finalLight.x, 0, 255), std::clamp((int)finalLight.y, 0, 255), std::clamp((int)finalLight.z, 0, 255));
-		return pixelMat;
+		return pixelMat + indirectLight;
 
 	}
 	else {
@@ -168,7 +199,7 @@ void RayTracing::draw600600() {
 			Vec3<float> directionRayon = Vec3<float>{ (float)i, (float)j, 0.f } -pointCamera;
 			normalize(directionRayon);
 			Rayon ray(Vec3<float>{(float)i, (float)j, 0.f}, directionRayon);
-			ppm.pixelMatrix[i][j] = kesseKisePazeOBouDutRaillon(ray);
+			ppm.pixelMatrix[i][j] = kesseKisePazeOBouDutRaillon(ray,0);
 		}
 	}
 
