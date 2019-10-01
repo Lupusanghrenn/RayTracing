@@ -60,7 +60,7 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L);
 	tabLumiere.push_back(L2);
 	//cornellBox
-	//tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 110000.f}, 100010.f));
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 110000.f}, 110000.f-600.f,Albedo()));
 
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
