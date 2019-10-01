@@ -47,12 +47,12 @@ void RayTracing::draw600600() {
 	int nH = 600, nW = 600;
 	std::vector<Sphere> tabSphere;
 	std::vector<Lumiere> tabLumiere;
-	Sphere S(Vec3<float>{300.f, 300.f, 250.f},150.f);
-	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f);
-	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f);
+	Sphere S(Vec3<float>{300.f, 300.f, 250.f},150.f,Albedo(0.5f));
+	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f, Albedo(0.5f));
+	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f, Albedo(0.5f));
 	Lumiere L(Vec3<float>{10.f, 10.f, 100.f}, 0.9f, 0.1f, 0.1f,	 30000000);
 	Lumiere L2(Vec3<float>{500.f, 0.f, 100.f}, 0.1f, 0.1f, 0.9f, 30000000);
-	int tailleCube = 30;
+	float tailleCube = 30.f;
 	int nbRayonRandom=100;
 	tabSphere.push_back(S);
 	tabSphere.push_back(S2);
@@ -60,10 +60,10 @@ void RayTracing::draw600600() {
 	tabLumiere.push_back(L);
 	tabLumiere.push_back(L2);
 	//cornellBox
-	tabSphere.push_back(Sphere(Vec3<float>{-30000.f, 000.f, 000.f}, 18000.f));
+	//tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, 110000.f}, 100010.f));
 
 	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(-tailleCube / 2, tailleCube / 2);	
+	std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);	
 
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
@@ -132,6 +132,7 @@ void RayTracing::draw600600() {
 							finalLight = finalLight + (lumSurfFactor * diffuse * (float)tabLumiere[indexLight].intensity * tabLumiere[indexLight].color);
 						}
 					}
+					//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
 					Vector3<int> pixelMat = Vector3<int>(std::clamp(ppm.pixelMatrix[i][j].x + (int)finalLight.x, 0, 255), std::clamp(ppm.pixelMatrix[i][j].y + (int)finalLight.y, 0, 255), std::clamp(ppm.pixelMatrix[i][j].z + (int)finalLight.z, 0, 255));
 					ppm.pixelMatrix[i][j] = pixelMat;
 				}		

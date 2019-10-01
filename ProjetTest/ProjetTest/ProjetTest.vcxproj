@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Albedo.cpp" />
     <ClCompile Include="Lumiere.cpp" />
     <ClCompile Include="PGM.cpp" />
     <ClCompile Include="Point.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Vecteur.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Albedo.h" />
     <ClInclude Include="C:\Users\rcourbier\Desktop\Cours\Includes\image_ppm.h" />
     <ClInclude Include="Lumiere.h" />
     <ClInclude Include="PGM.h" />

@@ -59,7 +59,7 @@ struct Vector3 {
     }
 
     friend Vector3<T> operator*(const float &scalar, const Vector3<T> &rhs) {
-        return Vector3{scalar * rhs.x, scalar * rhs.y, scalar * rhs.z};
+        return Vector3<T>{scalar * rhs.x, scalar * rhs.y, scalar * rhs.z};
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Vector3<T> &vector3) {
