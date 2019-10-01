@@ -60,6 +60,17 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 		//lancer de rayon jusqu a la lumiere
 		Vec3<float> impact = ray.origin + t * ray.direction;//position du point d intersection
 
+		//si jamais on est sur une sphere qui reflete
+		if (tabSphere[indexClosest].albedo.albedo == 1.f) {
+			Vec3<float> normale = impact - tabSphere[indexClosest].centre;
+			normalize(normale);
+			impact = impact + 0.01 * normale;//on évité l'acnée
+			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
+			Vec3<float> reflectDirection=dot(ray.direction,normale)* 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
+			Rayon reflect = Rayon(impact, reflectDirection);
+			return kesseKisePazeOBouDutRaillon(reflect);
+		}
+
 		//lumiere surfacique
 		Vec3<float> finalLight = Vec3<float>{ 0.f, 0.f, 0.f };
 
@@ -76,14 +87,14 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 				Vec3<float> directionL = posLampeSurf - impact;
 				normalize(directionL);
 				impact = impact + 0.01 * directionL;
-				Rayon reflect(impact, directionL);
+				Rayon shadowRay(impact, directionL);
 
 				float bestResult = -1.f;
 				Vec3<float> light = (posLampeSurf - impact);
 
 				for (int index = 0; index < tabSphere.size(); index++) {
 
-					auto res2 = RayTracing::intersect(reflect, tabSphere[index]);
+					auto res2 = RayTracing::intersect(shadowRay, tabSphere[index]);
 					float res2Value = res2.value_or(-1.f);
 					if (bestResult == -1.f) {
 						bestResult = res2Value;
@@ -97,7 +108,7 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 					float norme = norm(light);
 					Vec3<float> normal = impact - tabSphere[indexClosest].centre;
 					normalize(normal);
-					float diffuse = 1.f / (norme * norme) * (dot(normal, reflect.direction));
+					float diffuse = 1.f / (norme * norme) * (dot(normal, shadowRay.direction));
 					if (diffuse < 0) {
 						diffuse = 0;
 					}
@@ -121,7 +132,7 @@ Vector3<int> kesseKisePazeOBouDutRaillon(Rayon ray) {
 void RayTracing::draw600600() {
 	//On cree une image de 600 par 600 avec trace de rayon
 	int nH = 600, nW = 600;
-	Sphere S(Vec3<float>{100.f, 300.f, 250.f}, 100.f, Albedo(0.5f));
+	Sphere S(Vec3<float>{100.f, 300.f, 250.f}, 100.f, Albedo(1.f));
 	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f, Albedo(0.5f));
 	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f, Albedo(0.5f));
 	Lumiere L(Vec3<float>{300.f, 300.f, 100.f}, 0.7f, 0.7f, 0.7f, 30000000);
@@ -135,6 +146,7 @@ void RayTracing::draw600600() {
 	//cornellBox
 	float R = 30000.f;
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, R + 500.f}, R, Albedo(), Couleur(1.f, 0.f, 0.f)));//fond
+	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, -R +00.f}, R, Albedo(), Couleur(1.f, 0.f, 0.f)));//devant
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, R + 600.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
 	tabSphere.push_back(Sphere(Vec3<float>{300.f, -R, 0.f}, R, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
 	tabSphere.push_back(Sphere(Vec3<float>{R + 600.f, 300.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
@@ -146,7 +158,7 @@ void RayTracing::draw600600() {
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
 
-#pragma omp parallel for
+	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)
 	{
 		for (int j = 0; j < nW; j++)
