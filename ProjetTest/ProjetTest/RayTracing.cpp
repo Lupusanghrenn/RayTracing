@@ -17,6 +17,7 @@ int nbMaxVecteurIndirect = 1;
 
 Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 	if (profondeur > 5) {
+		//std::cout <<"profondeur max"; probleme avec la profondeur --> intersect ?
 		return Vec3<float>{0.f, 0.f, 0.f};
 	}
 	float t = -1.f;

@@ -12,7 +12,7 @@ template <typename T>
 struct Vec3 {
 	T x, y, z;
 };
-
+ 
 template <typename T>
 bool operator==(const Vec3<T>& a, const Vec3<T>& b) {
 	return a.x == b.x && a.y == b.y && a.z == b.z;
