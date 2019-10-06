@@ -6,6 +6,14 @@ Sphere::Sphere(Vec3<float> c, float r, Albedo albe) {
 	color = Couleur();
 }
 
+//retourne la valeur de la sphere normalise
+Vec3<float> Sphere::getNormal(Vec3<float> point)
+{
+	Vec3<float> normal = point - this->position;
+	normalize(normal);
+	return normal;
+}
+
 Sphere::Sphere() {
 	this->position = Vec3<float>{ 0.f, 0.f, 0.f };
 	this->rayon = 10.f;

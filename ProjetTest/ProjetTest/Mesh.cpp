@@ -18,3 +18,8 @@ std::optional<float> Mesh::intersect(Rayon R)
 	//TODO
 	return std::optional<float>();
 }
+
+Vec3<float> Mesh::getNormal(Vec3<float> point)
+{
+	return Vec3<float>();
+}

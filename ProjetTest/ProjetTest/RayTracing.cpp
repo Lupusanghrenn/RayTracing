@@ -37,8 +37,8 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 		//si jamais on est sur une sphere qui reflete
 		if (tabSphere[indexClosest].albedo.albedo == 1.f) {
-			Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			normalize(normale);
+			//Vec3<float> normale = impact - tabSphere[indexClosest].position;
+			Vec3<float> normale = tabSphere[indexClosest].getNormal(impact);
 			impact = impact + 0.01 * normale;//on évité l'acnée
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
 			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
@@ -63,7 +63,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 			//ok on fait le meme rayon que si on faisait du mirroir pour faire les lumières on fera les projections en hémisphere 
 
-			Vec3<float> normale = impact - tabSphere[indexClosest].position;
+			Vec3<float> normale = tabSphere[indexClosest].getNormal(impact);
 			normalize(normale);
 			impact = impact + 0.01 * normale;//on évité l'acnée
 			Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
@@ -108,7 +108,8 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				if (bestResult < 0.f || bestResult>norm(light)) {
 					//On as pas de sphere qui gene notre oeil
 					float norme = norm(light);
-					Vec3<float> normal = impact - tabSphere[indexClosest].position;
+					//Vec3<float> normal = impact - tabSphere[indexClosest].position;
+					Vec3<float> normal = tabSphere[indexClosest].getNormal(impact);
 					normalize(normal);
 					float diffuse = 1.f / (norme * norme) * (dot(normal, shadowRay.direction));
 					if (diffuse < 0) {
