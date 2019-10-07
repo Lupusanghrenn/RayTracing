@@ -12,6 +12,6 @@ public:
 	Albedo albedo;
 	Couleur color;
 	virtual std::optional<float> intersect(Rayon R) = 0;
-
+	virtual Vec3<float> getNormal(Vec3<float> point) = 0;
 };
 
