@@ -20,25 +20,27 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		//std::cout <<"profondeur max"; probleme avec la profondeur --> intersect ?
 		return Vec3<float>{0.f, 0.f, 0.f};
 	}
-	float t = -1.f;
+	Intersect bestResult;
 	int indexClosest = -1;
 	for (int index = 0; index < tabSphere.size(); index++) {
-		auto res = tabSphere[index].intersect(ray);
-		float value = res.value_or(-1.f);
-		if (value > 0.f && (value < t || t < 0.f)) {
-			t = value;
+		Intersect res = tabSphere[index].intersect(ray);
+		float value = res.t.value_or(-1.f);
+		if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
+			bestResult = res;
 			indexClosest = index;
 		}
 	}
 
-	if (t >= 0.f) {
+	if (bestResult.t.value_or(-1) >= 0.f) {
 		//lancer de rayon jusqu a la lumiere
+		float t = bestResult.t.value_or(-1);
 		Vec3<float> impact = ray.origin + t * ray.direction;//position du point d intersection
 
 		//si jamais on est sur une sphere qui reflete
 		if (tabSphere[indexClosest].albedo.albedo == 1.f) {
-			//Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			Vec3<float> normale = tabSphere[indexClosest].getNormal(impact);
+			Vec3<float> normale = impact - tabSphere[indexClosest].position;
+			normalize(normale);
+			//Vec3<float> normale = bestResult.normal;
 			impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
 			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
@@ -63,7 +65,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 			//ok on fait le meme rayon que si on faisait du mirroir pour faire les lumi�res on fera les projections en h�misphere 
 
-			Vec3<float> normale = tabSphere[indexClosest].getNormal(impact);
+			Vec3<float> normale = impact - tabSphere[indexClosest].position;
 			normalize(normale);
 			impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
@@ -91,26 +93,26 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				impact = impact + 0.01 * directionL;
 				Rayon shadowRay(impact, directionL);
 
-				float bestResult = -1.f;
+				Intersect bestResult2;
 				Vec3<float> light = (posLampeSurf - impact);
 
 				for (int index = 0; index < tabSphere.size(); index++) {
 
-					auto res2 = tabSphere[index].intersect(ray);
-					float res2Value = res2.value_or(-1.f);
-					if (bestResult == -1.f) {
-						bestResult = res2Value;
+					Intersect res2 = tabSphere[index].intersect(shadowRay);
+					float res2Value = res2.t.value_or(-1.f);
+					if (bestResult2.t.value_or(-1) == -1.f) {
+						bestResult2 = res2;
 					}
-					if (res2Value < bestResult && res2Value >= 0.f) {
-						bestResult = res2Value;
+					if (res2Value < bestResult2.t.value_or(-1) && res2Value >= 0.f) {
+						bestResult2 = res2;
 					}
 				}
-				if (bestResult < 0.f || bestResult>norm(light)) {
+				if (bestResult2.t.value_or(-1) < 0.f || bestResult2.t.value_or(-1) > norm(light)) {
 					//On as pas de sphere qui gene notre oeil
 					float norme = norm(light);
-					//Vec3<float> normal = impact - tabSphere[indexClosest].position;
-					Vec3<float> normal = tabSphere[indexClosest].getNormal(impact);
+					Vec3<float> normal = impact - tabSphere[indexClosest].position;
 					normalize(normal);
+					//Vec3<float> normal = bestResult2.normal;
 					float diffuse = 1.f / (norme * norme) * (dot(normal, shadowRay.direction));
 					if (diffuse < 0) {
 						diffuse = 0;
@@ -123,7 +125,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		}
 		//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
 		finalLight = finalLight * tabSphere[indexClosest].color.color;
-		return finalLight + 0.1f*indirectLight;
+		return finalLight +0.1f * indirectLight;
 
 	}
 	else {

@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="Albedo.cpp" />
     <ClCompile Include="Couleur.cpp" />
+    <ClCompile Include="Intersect.cpp" />
     <ClCompile Include="Lumiere.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Albedo.h" />
     <ClInclude Include="C:\Users\rcourbier\Desktop\Cours\Includes\image_ppm.h" />
     <ClInclude Include="Couleur.h" />
+    <ClInclude Include="Intersect.h" />
     <ClInclude Include="Lumiere.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object.h" />

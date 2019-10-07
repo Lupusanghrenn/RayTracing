@@ -13,10 +13,10 @@ Mesh::Mesh(string chemin)
 	//TODO
 }
 
-std::optional<float> Mesh::intersect(Rayon R)
+Intersect Mesh::intersect(Rayon R)
 {
 	//TODO
-	return std::optional<float>();
+	return Intersect();
 }
 
 Vec3<float> Mesh::getNormal(Vec3<float> point)
