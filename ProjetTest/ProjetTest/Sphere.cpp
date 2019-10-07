@@ -53,13 +53,11 @@ Intersect Sphere::intersect(Rayon R) {
 	}
 
 	//normale
-	if (result.t.value_or(-1)>=0) {
-		float monT = result.t.value_or(-1);
-		Vec3<float> arrive = R.origin + monT * R.direction;
-		Vec3<float> normal = (arrive - this->position);
-		normalize(normal);
-		result.normal = normal;
-	}
+	float monT = result.t.value_or(-1);
+	Vec3<float> arrive = R.origin + monT * R.direction;
+	Vec3<float> normal = (arrive - this->position);
+	normalize(normal);
+	result.normal = normal;
 
 	return result;
 }

@@ -38,9 +38,9 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 		//si jamais on est sur une sphere qui reflete
 		if (tabSphere[indexClosest].albedo.albedo == 1.f) {
-			Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			normalize(normale);
-			//Vec3<float> normale = bestResult.normal;
+			/*Vec3<float> normale = impact - tabSphere[indexClosest].position;
+			normalize(normale);*/
+			Vec3<float> normale = bestResult.normal;
 			impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
 			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
@@ -65,8 +65,9 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 			//ok on fait le meme rayon que si on faisait du mirroir pour faire les lumi�res on fera les projections en h�misphere 
 
-			Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			normalize(normale);
+			/*Vec3<float> normale = impact - tabSphere[indexClosest].position;
+			normalize(normale);*/
+			Vec3<float> normale = bestResult.normal;
 			impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
 			Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
@@ -110,9 +111,9 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				if (bestResult2.t.value_or(-1) < 0.f || bestResult2.t.value_or(-1) > norm(light)) {
 					//On as pas de sphere qui gene notre oeil
 					float norme = norm(light);
-					Vec3<float> normal = impact - tabSphere[indexClosest].position;
-					normalize(normal);
-					//Vec3<float> normal = bestResult2.normal;
+					/*Vec3<float> normal = impact - tabSphere[indexClosest].position;
+					normalize(normal);*/
+					Vec3<float> normal = bestResult2.normal;
 					float diffuse = 1.f / (norme * norme) * (dot(normal, shadowRay.direction));
 					if (diffuse < 0) {
 						diffuse = 0;
