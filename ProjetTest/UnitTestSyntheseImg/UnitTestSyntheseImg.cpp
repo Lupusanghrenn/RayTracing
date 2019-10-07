@@ -18,7 +18,7 @@ namespace UnitTestSyntheseImg
 		{
 			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{1.f, 0.f, 0.f});
 			Sphere S(Vec3<float>{4.f, 0.f, 0.f}, 3.f);
-			if (auto res = RayTracing::intersect(R, S).value_or(-1.f)) {
+			if (auto res = S.intersect(R).value_or(-1.f)) {
 				Assert::AreEqual(1.f, res);
 			}
 		}
@@ -26,7 +26,7 @@ namespace UnitTestSyntheseImg
 		TEST_METHOD(TestIntersect2) {
 			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{-1.f, 0.f, 0.f});
 			Sphere S(Vec3<float>{-4.f, 0.f, 0.f}, 3.f);
-			if (auto res = RayTracing::intersect(R, S).value_or(-1.f)) {
+			if (auto res = S.intersect(R).value_or(-1.f)) {
 				Assert::AreEqual(1.f, res);
 			}
 		}
@@ -34,7 +34,7 @@ namespace UnitTestSyntheseImg
 		TEST_METHOD(TestIntersect3) {
 			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{1.f, 0.f, 0.f});
 			Sphere S(Vec3<float>{4.f, 3.f, 0.f}, 3.f);
-			if (auto res = RayTracing::intersect(R, S).value_or(-1.f)) {
+			if (auto res = S.intersect(R).value_or(-1.f)) {
 				Assert::AreEqual(4.f, res);
 			}
 		}

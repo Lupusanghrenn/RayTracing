@@ -109,6 +109,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <OpenMPSupport>true</OpenMPSupport>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,6 +162,7 @@
     <ClCompile Include="Albedo.cpp" />
     <ClCompile Include="Couleur.cpp" />
     <ClCompile Include="Lumiere.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="PGM.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="PPM.cpp" />
@@ -174,6 +177,7 @@
     <ClInclude Include="C:\Users\rcourbier\Desktop\Cours\Includes\image_ppm.h" />
     <ClInclude Include="Couleur.h" />
     <ClInclude Include="Lumiere.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="PGM.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="PortableAnymap.h" />
