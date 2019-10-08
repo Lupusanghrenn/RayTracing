@@ -6,6 +6,8 @@
 #include "Couleur.h"
 #include "Intersect.h"
 
+class Box;
+
 class Object
 {
 public:
@@ -13,5 +15,7 @@ public:
 	Albedo albedo;
 	Couleur color;
 	virtual Intersect intersect(Rayon R) = 0;
+	virtual Box creeBoxAPartirObject() = 0;
+	
 };
 

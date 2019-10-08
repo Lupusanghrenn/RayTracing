@@ -3,17 +3,11 @@
 Box::Box() {
 	pointMin = Vec3<float>{ 0,0,0 };
 	pointMax = Vec3<float>{ 1,1,1 };
-	position = pointMin;
-	albedo = Albedo();
-	color = Couleur();
 }
 
 Box::Box(Vec3<float> pMin, Vec3<float> pMax) {
 	pointMin = pMin;
 	pointMax = pMax;
-	position = pointMin;
-	albedo = Albedo();
-	color = Couleur();
 }
 
 Intersect Box::intersect(Rayon R) {
@@ -62,6 +56,33 @@ Intersect Box::intersect(Rayon R) {
 	return result;
 }
 
+Box Box::creeBoxAPartirObject()
+{
+	return Box(pointMin,pointMax);
+}
+
 Box Box::unionBox(Box box2) {
-	return Box();
+	//on recupere les x,y et z min de chaque box
+	Vec3<float> pMin = this->pointMin;
+	if (pMin.x > box2.pointMin.x) {
+		pMin.x = box2.pointMin.x;
+	}
+	if (pMin.y > box2.pointMin.y) {
+		pMin.y = box2.pointMin.y;
+	}
+	if (pMin.z > box2.pointMin.z) {
+		pMin.z = box2.pointMin.z;
+	}
+
+	Vec3<float> pMax = this->pointMax;
+	if (pMax.x > box2.pointMax.x) {
+		pMax.x = box2.pointMax.x;
+	}
+	if (pMax.y > box2.pointMax.y) {
+		pMax.y = box2.pointMax.y;
+	}
+	if (pMax.z > box2.pointMax.z) {
+		pMax.z = box2.pointMax.z;
+	}
+	return Box(pMin,pMax);
 }

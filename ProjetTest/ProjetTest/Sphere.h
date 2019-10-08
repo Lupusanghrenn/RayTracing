@@ -13,5 +13,6 @@ public:
     Intersect intersect(Rayon R);
 	Sphere(Vec3<float> c, float r, Albedo albe);
 	float rayon;
+	Box creeBoxAPartirObject() override;
 };
 

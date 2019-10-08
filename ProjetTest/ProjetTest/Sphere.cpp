@@ -6,6 +6,13 @@ Sphere::Sphere(Vec3<float> c, float r, Albedo albe) {
 	color = Couleur();
 }
 
+Box Sphere::creeBoxAPartirObject()
+{
+	Vec3<float> pointMin = position - Vec3<float>{rayon, rayon, 0};
+	Vec3<float> pointMax = position + Vec3<float>{rayon, rayon, 0};
+	return Box(pointMin,pointMax);
+}
+
 Sphere::Sphere() {
 	this->position = Vec3<float>{ 0.f, 0.f, 0.f };
 	this->rayon = 10.f;

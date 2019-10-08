@@ -3,7 +3,7 @@
 #include "Vecteur.cpp"
 #include <vector>
 
-class Mesh : Object
+class Mesh : public Object
 {
 public:
 	Mesh();

@@ -15,6 +15,7 @@ std::uniform_real_distribution<float> distribution01(0.f, 1.f);
 int nbRayonRandom = 100;
 std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
+std::vector<Box> boundingBoxes;
 int nbMaxVecteurIndirect = 1;
 
 Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
@@ -163,7 +164,10 @@ void RayTracing::draw600600() {
 
 	//remplissage du tableau de pixel
 	PPM ppm(nH, nW, 255);
+	
+	//bounding box
 
+	//boucle principale
 	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)
 	{
