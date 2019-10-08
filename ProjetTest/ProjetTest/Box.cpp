@@ -1,14 +1,38 @@
 #include "Box.h"
 
-Box::Box() {
-	pointMin = Vec3<float>{ 0,0,0 };
-	pointMax = Vec3<float>{ 1,1,1 };
-}
-
 Box::Box(Vec3<float> pMin, Vec3<float> pMax) {
 	pointMin = pMin;
 	pointMax = pMax;
 }
+
+//Box::Box(Box* b1, Box* b2)
+//{
+//	Vec3<float> pMin = b1->pointMin;
+//	if (pMin.x > b2->pointMin.x) {
+//		pMin.x = b2->pointMin.x;
+//	}
+//	if (pMin.y > b2->pointMin.y) {
+//		pMin.y = b2->pointMin.y;
+//	}
+//	if (pMin.z > b2->pointMin.z) {
+//		pMin.z = b2->pointMin.z;
+//	}
+//
+//	Vec3<float> pMax = b1->pointMax;
+//	if (pMax.x > b2->pointMax.x) {
+//		pMax.x = b2->pointMax.x;
+//	}
+//	if (pMax.y > b2->pointMax.y) {
+//		pMax.y = b2->pointMax.y;
+//	}
+//	if (pMax.z > b2->pointMax.z) {
+//		pMax.z = b2->pointMax.z;
+//	}
+//
+//	Box* b = new Box(pMin, pMax);
+//	b->childrens.push_back(b1);
+//	b->childrens.push_back(b2);
+//}
 
 Intersect Box::intersect(Rayon R) {
 	Intersect result;
@@ -56,33 +80,38 @@ Intersect Box::intersect(Rayon R) {
 	return result;
 }
 
-Box Box::creeBoxAPartirObject()
+Box* Box::creeBoxAPartirObject()
 {
-	return Box(pointMin,pointMax);
+	return this;
 }
 
-Box Box::unionBox(Box box2) {
+Box* Box::unionBox(Box* box2) {
 	//on recupere les x,y et z min de chaque box
 	Vec3<float> pMin = this->pointMin;
-	if (pMin.x > box2.pointMin.x) {
-		pMin.x = box2.pointMin.x;
+	if (pMin.x > box2->pointMin.x) {
+		pMin.x = box2->pointMin.x;
 	}
-	if (pMin.y > box2.pointMin.y) {
-		pMin.y = box2.pointMin.y;
+	if (pMin.y > box2->pointMin.y) {
+		pMin.y = box2->pointMin.y;
 	}
-	if (pMin.z > box2.pointMin.z) {
-		pMin.z = box2.pointMin.z;
+	if (pMin.z > box2->pointMin.z) {
+		pMin.z = box2->pointMin.z;
 	}
 
 	Vec3<float> pMax = this->pointMax;
-	if (pMax.x > box2.pointMax.x) {
-		pMax.x = box2.pointMax.x;
+	if (pMax.x > box2->pointMax.x) {
+		pMax.x = box2->pointMax.x;
 	}
-	if (pMax.y > box2.pointMax.y) {
-		pMax.y = box2.pointMax.y;
+	if (pMax.y > box2->pointMax.y) {
+		pMax.y = box2->pointMax.y;
 	}
-	if (pMax.z > box2.pointMax.z) {
-		pMax.z = box2.pointMax.z;
+	if (pMax.z > box2->pointMax.z) {
+		pMax.z = box2->pointMax.z;
 	}
-	return Box(pMin,pMax);
+
+	Box* b = new Box(pMin, pMax);
+	b->childrens.push_back(this);
+	b->childrens.push_back(box2);
+	
+	return b;
 }

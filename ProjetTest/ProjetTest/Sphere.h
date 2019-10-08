@@ -2,6 +2,7 @@
 #include "Vecteur.cpp"
 #include "Albedo.h"
 #include "Couleur.h"
+#include "Box.h"
 #include "Object.h"
 #include "Intersect.h"
 
@@ -13,6 +14,6 @@ public:
     Intersect intersect(Rayon R);
 	Sphere(Vec3<float> c, float r, Albedo albe);
 	float rayon;
-	Box creeBoxAPartirObject() override;
+	Box* creeBoxAPartirObject();
 };
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "Box.h"
 #include "Rayon.h"
 #include "Sphere.h"
 #include "Lumiere.h"

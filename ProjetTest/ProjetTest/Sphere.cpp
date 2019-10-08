@@ -6,11 +6,13 @@ Sphere::Sphere(Vec3<float> c, float r, Albedo albe) {
 	color = Couleur();
 }
 
-Box Sphere::creeBoxAPartirObject()
+Box* Sphere::creeBoxAPartirObject()
 {
 	Vec3<float> pointMin = position - Vec3<float>{rayon, rayon, 0};
 	Vec3<float> pointMax = position + Vec3<float>{rayon, rayon, 0};
-	return Box(pointMin,pointMax);
+	Box* b = new Box(pointMin, pointMax);
+	b->child = this;
+	return b;
 }
 
 Sphere::Sphere() {
@@ -30,6 +32,7 @@ Sphere::Sphere(Vec3<float> c, float r, Albedo albe, Couleur col)
 
 Intersect Sphere::intersect(Rayon R) {
 	Intersect result = Intersect();
+	result.object = this;
 	float a = 1.f;
 	float b = 2 * (dot(R.origin, R.direction) - dot(position, R.direction));
 	float c = dot(R.origin, R.origin) + dot(position, position) - 2 * dot(position, R.origin) - rayon * rayon;

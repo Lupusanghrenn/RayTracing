@@ -15,7 +15,6 @@ public:
 	Albedo albedo;
 	Couleur color;
 	virtual Intersect intersect(Rayon R) = 0;
-	virtual Box creeBoxAPartirObject() = 0;
-	
+	virtual Box* creeBoxAPartirObject() = 0;
 };
 
