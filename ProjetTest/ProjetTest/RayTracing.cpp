@@ -38,8 +38,8 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 		//si jamais on est sur une sphere qui reflete
 		if (tabSphere[indexClosest].albedo.albedo == 1.f) {
-			/*Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			normalize(normale);*/
+			//Vec3<float> normale = impact - tabSphere[indexClosest].position;
+			//normalize(normale);
 			Vec3<float> normale = bestResult.normal;
 			impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
@@ -91,7 +91,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				posLampeSurf.z += randomz;
 				Vec3<float> directionL = posLampeSurf - impact;
 				normalize(directionL);
-				impact = impact + 0.01 * directionL;
+				//impact = impact + 0.01 * directionL;
 				Rayon shadowRay(impact, directionL);
 
 				Intersect bestResult2;
@@ -111,9 +111,8 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				if (bestResult2.t.value_or(-1) < 0.f || bestResult2.t.value_or(-1) > norm(light)) {
 					//On as pas de sphere qui gene notre oeil
 					float norme = norm(light);
-					/*Vec3<float> normal = impact - tabSphere[indexClosest].position;
-					normalize(normal);*/
-					Vec3<float> normal = bestResult2.normal;
+					Vec3<float> normal = bestResult.normal;
+					//std::cout << bestResult2.normal.x<<" "<<bestResult2.normal.y<< endl;
 					float diffuse = 1.f / (norme * norme) * (dot(normal, shadowRay.direction));
 					if (diffuse < 0) {
 						diffuse = 0;
@@ -143,7 +142,7 @@ void RayTracing::draw600600() {
 	Lumiere L(Vec3<float>{300.f, 300.f, 100.f}, 0.7f, 0.7f, 0.7f, 30000000);
 	Lumiere L2(Vec3<float>{500.f, 100.f, 100.f}, 0.1f, 0.1f, 0.9f, 30000000);
 
-	//tabSphere.push_back(S);
+	tabSphere.push_back(S);
 	tabSphere.push_back(S2);
 	tabSphere.push_back(S3);
 	tabLumiere.push_back(L);
