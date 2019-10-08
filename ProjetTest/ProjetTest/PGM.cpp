@@ -15,7 +15,6 @@ PGM PGM::load(const std::string &path) {
     PGM image(width, height, maxValue);
 
     int i = 0;
-    int val;
     while (file >> image.pixelMatrix[i / width][i % width]) {
         ++i;
     }

@@ -6,12 +6,14 @@
 #include <vector>
 #include <random>
 
+typedef shared_ptr<Object> PObject;
+
 float tailleCube = 30.f;
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);
 std::uniform_real_distribution<float> distribution01(0.f, 1.f);
 int nbRayonRandom = 100;
-std::vector<Sphere> tabSphere;
+std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
 int nbMaxVecteurIndirect = 1;
 
@@ -23,7 +25,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 	Intersect bestResult;
 	int indexClosest = -1;
 	for (int index = 0; index < tabSphere.size(); index++) {
-		Intersect res = tabSphere[index].intersect(ray);
+		Intersect res = tabSphere[index]->intersect(ray);
 		float value = res.t.value_or(-1.f);
 		if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
 			bestResult = res;
@@ -37,7 +39,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		Vec3<float> impact = ray.origin + t * ray.direction;//position du point d intersection
 
 		//si jamais on est sur une sphere qui reflete
-		if (tabSphere[indexClosest].albedo.albedo == 1.f) {
+		if (tabSphere[indexClosest]->albedo.albedo == 1.f) {
 			//Vec3<float> normale = impact - tabSphere[indexClosest].position;
 			//normalize(normale);
 			Vec3<float> normale = bestResult.normal;
@@ -99,7 +101,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 				for (int index = 0; index < tabSphere.size(); index++) {
 
-					Intersect res2 = tabSphere[index].intersect(shadowRay);
+					Intersect res2 = tabSphere[index]->intersect(shadowRay);
 					float res2Value = res2.t.value_or(-1.f);
 					if (bestResult2.t.value_or(-1) == -1.f) {
 						bestResult2 = res2;
@@ -124,7 +126,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 			}
 		}
 		//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
-		finalLight = finalLight * tabSphere[indexClosest].color.color;
+		finalLight = finalLight * tabSphere[indexClosest]->color.color;
 		return finalLight +0.1f * indirectLight;
 
 	}
@@ -136,26 +138,26 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 void RayTracing::draw600600() {
 	//On cree une image de 600 par 600 avec trace de rayon
 	int nH = 600, nW = 600;
-	Sphere S(Vec3<float>{100.f, 300.f, 250.f}, 100.f, Albedo(1.f));
-	Sphere S2(Vec3<float>{100.f, 100.f, 300.f}, 50.f, Albedo(0.5f));
-	Sphere S3(Vec3<float>{500.f, 500.f, 100.f}, 30.f, Albedo(0.5f));
+	Sphere S = Sphere(Vec3<float>{100.f, 300.f, 250.f}, 20.f, Albedo(1.f));
+	Sphere S2 =Sphere(Vec3<float>{100.f, 100.f, 300.f}, 50.f, Albedo(0.5f));
+	Sphere S3 =Sphere(Vec3<float>{500.f, 500.f, 100.f}, 30.f, Albedo(0.5f));
 	Lumiere L(Vec3<float>{300.f, 300.f, 100.f}, 0.7f, 0.7f, 0.7f, 30000000);
 	Lumiere L2(Vec3<float>{500.f, 100.f, 100.f}, 0.1f, 0.1f, 0.9f, 30000000);
 
-	tabSphere.push_back(S);
-	tabSphere.push_back(S2);
-	tabSphere.push_back(S3);
+
 	tabLumiere.push_back(L);
 	//tabLumiere.push_back(L2);
 	//cornellBox
 	float R = 30000.f;
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, R + 500.f}, R, Albedo(), Couleur(1.f, 0.f, 0.f)));//fond
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, 300.f, -R +00.f}, R, Albedo(), Couleur(0.1f, 0.1f, 0.1f)));//devant
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, R + 600.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
-	tabSphere.push_back(Sphere(Vec3<float>{300.f, -R, 0.f}, R, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
-	tabSphere.push_back(Sphere(Vec3<float>{R + 600.f, 300.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
-	tabSphere.push_back(Sphere(Vec3<float>{-R, 300.f, 0.f}, R, Albedo(), Couleur(1.f, 1.f, 0.f)));//haut	
-
+	tabSphere.push_back(new Sphere(Vec3<float>{300.f, 300.f, R + 500.f}, R, Albedo(), Couleur(1.f, 0.f, 0.f)));//fond
+	tabSphere.push_back(new Sphere(Vec3<float>{300.f, 300.f, -R +00.f}, R, Albedo(), Couleur(0.1f, 0.1f, 0.1f)));//devant
+	tabSphere.push_back(new Sphere(Vec3<float>{300.f, R + 600.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 0.f)));//droite
+	tabSphere.push_back(new Sphere(Vec3<float>{300.f, -R, 0.f}, R, Albedo(), Couleur(1.f, 0.f, 1.f)));//gauche
+	tabSphere.push_back(new Sphere(Vec3<float>{R + 600.f, 300.f, 0.f}, R, Albedo(), Couleur(0.f, 1.f, 1.f)));//bas
+	tabSphere.push_back(new Sphere(Vec3<float>{-R, 300.f, 0.f}, R, Albedo(), Couleur(1.f, 1.f, 0.f)));//haut	
+	tabSphere.push_back(&S);
+	tabSphere.push_back(&S2);
+	tabSphere.push_back(&S3);
 	//Camera ortho
 	Vec3<float> pointCamera = Vec3<float>{ 300.f, 300.f, -450.f };
 

@@ -10,7 +10,7 @@ class Sphere : public Object
 public:
 	Sphere();
 	Sphere(Vec3<float> c, float r, Albedo albe, Couleur col);
-	Intersect intersect(Rayon R);
+    Intersect intersect(Rayon R);
 	Sphere(Vec3<float> c, float r, Albedo albe);
 	float rayon;
 };
