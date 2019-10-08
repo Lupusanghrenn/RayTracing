@@ -192,10 +192,13 @@ void RayTracing::draw600600() {
 	for (int a = 0; a < tabSphere.size()-3; a++) {
 		boundingBoxes.push_back(tabSphere[a]->creeBoxAPartirObject());
 	}
-	//creation de box recursivement
+	//creation de box manuelle
 	Box* superBox = tabSphere[6]->creeBoxAPartirObject()->unionBox(tabSphere[7]->creeBoxAPartirObject());
 	superBox = superBox->unionBox(tabSphere[8]->creeBoxAPartirObject());
 	boundingBoxes.push_back(superBox);
+	//maintenant faut faire ca en recurisif
+
+
 	//boucle principale
 	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)

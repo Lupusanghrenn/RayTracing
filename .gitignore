@@ -20,3 +20,5 @@ ProjetTest/ProjetTest/Release/ProjetTest.log
 ProjetTest/Release/
 
 *.pdb
+
+ProjetTest/ProjetTest/Release/RayTracing.Build.CppClean.log
