@@ -11,56 +11,48 @@ Mesh::Mesh(string chemin)
 {
 	//récupération du code avec Unity
 	//TODO
-	/*string[] lines = System.IO.File.ReadAllLines(@"Assets/buddha.off");
-		Debug.Log(lines[0]);
-	string[] tmp = lines[1].Split(' ');
-	int nbVertex = int.Parse(tmp[0]);
-	int nbTriangles = int.Parse(tmp[1]);
+	//string[] lines;
+	ifstream file;
+	file.open("buddha.off");
+	int nbVertex, nbTriangles;
+	file >> nbVertex >> nbTriangles;
 
-	List<Vector3> vertices = new List<Vector3>();
-	List<Vector3> normales = new List<Vector3>();
-	List<Vector3> normalesVertices = new List<Vector3>();
-	List<int> triangles = new List<int>();
-	MeshFilter mshFilter = gameObject.AddComponent<MeshFilter>();
-	MeshRenderer mshRenderer = gameObject.AddComponent<MeshRenderer>();
-	Vector3 sommeSommets = new Vector3();//centrage
-	float biggestNorme = 0;//normalisation
-
+	Vec3<float> sommeSommets;
+	float biggestNorme = 0;
 	for (int i = 0; i < nbVertex; i++)
 	{
-		string[] tmpVertex = lines[i + 2].Split(' ');
-		float x = float.Parse(tmpVertex[0], CultureInfo.InvariantCulture);
-		float y = float.Parse(tmpVertex[1], CultureInfo.InvariantCulture);
-		float z = float.Parse(tmpVertex[2], CultureInfo.InvariantCulture);
-		var vecTmp = new Vector3(x, y, z);
-		vertices.Add(vecTmp);
-		sommeSommets += vecTmp;
-		if (vecTmp.magnitude > biggestNorme)
+		float x, y, z;
+		file >> x >> y >> z;
+		Vec3<float> vecTmp = Vec3<float>{ x,y,z };
+		vertices.push_back(vecTmp);
+		sommeSommets = sommeSommets + vecTmp;
+		if (norm(vecTmp) > biggestNorme)
 		{
-			biggestNorme = vecTmp.magnitude;
+			biggestNorme = norm(vecTmp);
 		}
 	}
 
-	int test = 0;
 	for (int i = 2 + nbVertex; i < (2 + nbVertex + nbTriangles); i++)
 	{
-		string[] tmpVertex = lines[i].Split(' ');
+		/*string[] tmpVertex = lines[i].Split(' ');
 		int s1 = int.Parse(tmpVertex[1], CultureInfo.InvariantCulture);
 		int s2 = int.Parse(tmpVertex[2], CultureInfo.InvariantCulture);
-		int s3 = int.Parse(tmpVertex[3], CultureInfo.InvariantCulture);
-		triangles.Add(s1);
-		triangles.Add(s2);
-		triangles.Add(s3);
+		int s3 = int.Parse(tmpVertex[3], CultureInfo.InvariantCulture);*/
+		int s0, s1, s2, s3;
+		file >> s0 >> s1 >> s2 >> s3;
+		triangles.push_back(s1);
+		triangles.push_back(s2);
+		triangles.push_back(s3);
 
 		//calcul des normales
-		Vector3 lhs = vertices[s2] - vertices[s1];
-		Vector3 rhs = vertices[s3] - vertices[s2];
-		normales.Add(Vector3.Cross(lhs, rhs));
-		test = i;
+		Vec3<float> lhs = vertices[s2] - vertices[s1];
+		Vec3<float> rhs = vertices[s3] - vertices[s2];
+		normales.push_back(cross(lhs, rhs));
 	}
-	Debug.Log(triangles.Count);
 
+	//chargement standard du maillage sans normalisation et centrage
 
+	/*
 	Vector3 centreMaillage = sommeSommets / nbVertex;
 	centreMaillage = centreMaillage - new Vector3(0f, 0f, 0f);//on a donc un vecteur qui ramene le centre a O --> on applique ce vecteur a tout les points
 	for (int i = 0; i < nbVertex; i++)
