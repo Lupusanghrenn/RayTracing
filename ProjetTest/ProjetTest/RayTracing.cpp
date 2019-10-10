@@ -37,7 +37,7 @@ Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 }
 
 Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
-	if (profondeur > 5) {
+	if (profondeur > 3) {
 		//std::cout <<"profondeur max"; probleme avec la profondeur --> intersect ?
 		return Vec3<float>{0.f, 0.f, 0.f};
 	}
@@ -78,6 +78,15 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		Vec3<float> indirectLight = Vec3<float>{ 0.f, 0.f, 0.f };
 
 		for (int nbVecteurIndirect = 0; nbVecteurIndirect < nbMaxVecteurIndirect; nbVecteurIndirect++) {
+
+			//random 
+			Vec3<float> rayonRandom = bestResult.normal;
+			Vec3<float> randomTweak = Vec3<float>{ distribution01(generator),distribution01(generator),distribution01(generator) };
+			rayonRandom = rayonRandom + randomTweak;
+			normalize(rayonRandom);
+			impact = impact + 0.03 * rayonRandom;//on �vit� l'acn�e
+			Rayon reflect = Rayon(impact, rayonRandom);
+			indirectLight = indirectLight + kesseKisePazeOBouDutRaillon(reflect, profondeur + 1);
 			/*float random1 = distribution01(generator);
 			float random2 = distribution01(generator);
 
@@ -92,13 +101,13 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 			/*Vec3<float> normale = impact - tabSphere[indexClosest].position;
 			normalize(normale);*/
-			Vec3<float> normale = bestResult.normal;
-			impact = impact + 0.01 * normale;//on �vit� l'acn�e
-			Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
-			Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
-			normalize(reflectDirection);
-			Rayon reflect = Rayon(impact, reflectDirection);
-			indirectLight = indirectLight + kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
+			//Vec3<float> normale = bestResult.normal;
+			//impact = impact + 0.01 * normale;//on �vit� l'acn�e
+			//Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
+			//Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
+			//normalize(reflectDirection);
+			//Rayon reflect = Rayon(impact, reflectDirection);
+			indirectLight = indirectLight + 0.2f * kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
 		}
 
 		//lumiere surfacique
@@ -116,7 +125,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				posLampeSurf.z += randomz;
 				Vec3<float> directionL = posLampeSurf - impact;
 				normalize(directionL);
-				//impact = impact + 0.01 * directionL;
+				impact = impact + 0.01 * directionL;
 				Rayon shadowRay(impact, directionL);
 
 				Intersect bestResult2;
