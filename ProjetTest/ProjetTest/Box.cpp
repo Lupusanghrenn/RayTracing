@@ -115,3 +115,56 @@ Box* Box::unionBox(Box* box2) {
 	
 	return b;
 }
+
+Box* Box::boxEnglobante(std::vector<Box*> boxes)
+{
+	//pas d enfant
+	Vec3<float> pMin = boxes[0]->pointMin;
+	Vec3<float> pMax = boxes[0]->pointMax;
+
+	for (int i = 1; i < boxes.size(); i++) {
+		if (pMin.x > boxes[i]->pointMin.x) {
+			pMin.x = boxes[i]->pointMin.x;
+		}
+		if (pMin.y > boxes[i]->pointMin.y) {
+			pMin.y = boxes[i]->pointMin.y;
+		}
+		if (pMin.z > boxes[i]->pointMin.z) {
+			pMin.z = boxes[i]->pointMin.z;
+		}
+
+		if (pMax.x > boxes[i]->pointMax.x) {
+			pMax.x = boxes[i]->pointMax.x;
+		}
+		if (pMax.y > boxes[i]->pointMax.y) {
+			pMax.y = boxes[i]->pointMax.y;
+		}
+		if (pMax.z > boxes[i]->pointMax.z) {
+			pMax.z = boxes[i]->pointMax.z;
+		}
+	}
+
+	Box* b = new Box(pMin, pMax);
+	//maintenant on fait les test pour savoir si enfant ou non
+	if (boxes.size() == 1) {
+		return boxes[0];
+	}
+	else {
+		//on fera le sort plus tard
+		std::vector<Box*> vecGauche;
+		std::vector<Box*> vecDroite;
+
+		for (int indGauche = 0; indGauche < boxes.size() / 2; indGauche++) {
+			vecGauche.push_back(boxes[indGauche]);
+		}
+
+		for (int indDroite = vecGauche.size(); indDroite < boxes.size(); indDroite++) {
+			vecDroite.push_back(boxes[indDroite]);
+		}
+
+		//recursivite
+		b->childrens.push_back(boxEnglobante(vecGauche));
+		b->childrens.push_back(boxEnglobante(vecDroite));
+	}
+	return b;
+}

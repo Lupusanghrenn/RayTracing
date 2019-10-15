@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Box.h"
 
 Mesh::Mesh()
 {
@@ -100,9 +101,8 @@ Intersect Mesh::intersect(Rayon R)
 	return Intersect();
 }
 
-Vec3<float> Mesh::getNormal(Vec3<float> point)
-{
-	return Vec3<float>();
+Box* creeBoxAPartirObject() {
+	return new Box(Vec3<float>{ 0,0,0 },Vec3<float>{ 1,1,1 });
 }
 
 //private void exportMaillage(List<Vector3> vertices, List<int> triangles, List<Vector3> normales, string nomFichierOut)

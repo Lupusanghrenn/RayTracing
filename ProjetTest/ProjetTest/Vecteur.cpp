@@ -57,7 +57,7 @@ template <typename T>
 Vec3<T> cross(const Vec3<T>& a, const Vec3<T>& b) {
 	//return a.x * b.x + a.y * b.y + a.z * b.z;
 	T uv1 = a.y * b.z - b.y * a.z;
-	T uv2 = b.a * a.z - a.x * b.z;
+	T uv2 = b.x * a.z - a.x * b.z;
 	T uv3 = a.x * b.y - b.x * a.y;
 
 	return Vec3<T>{uv1, uv2, uv3};

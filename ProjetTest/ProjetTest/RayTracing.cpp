@@ -107,7 +107,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 			//Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
 			//normalize(reflectDirection);
 			//Rayon reflect = Rayon(impact, reflectDirection);
-			indirectLight = indirectLight + 0.2f * kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
+			//indirectLight = indirectLight + 0.2f * kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
 		}
 
 		//lumiere surfacique
@@ -190,6 +190,12 @@ void RayTracing::draw600600() {
 	tabSphere.push_back(&S);
 	tabSphere.push_back(&S2);
 	tabSphere.push_back(&S3);
+
+	//on ajoute plein de sphere de test
+	for (int nbSphere = 0; nbSphere < 100; nbSphere++) {
+		Vec3<float> vecTmp = Vec3<float>{ (distribution01(generator) * 500.f) , (distribution01(generator) * 500.f), (distribution01(generator) * 500.f)};
+		tabSphere.push_back(new Sphere(vecTmp, 10.f, Albedo(0.5f)));
+	}
 	//Camera ortho
 	Vec3<float> pointCamera = Vec3<float>{ 300.f, 300.f, -450.f };
 
@@ -198,15 +204,22 @@ void RayTracing::draw600600() {
 	
 	//bounding box
 	//creation d une box pour chaque objet
-	for (int a = 0; a < tabSphere.size()-3; a++) {
+	for (int a = 0; a < 6; a++) {
 		boundingBoxes.push_back(tabSphere[a]->creeBoxAPartirObject());
 	}
-	//creation de box manuelle
-	Box* superBox = tabSphere[6]->creeBoxAPartirObject()->unionBox(tabSphere[7]->creeBoxAPartirObject());
-	superBox = superBox->unionBox(tabSphere[8]->creeBoxAPartirObject());
-	boundingBoxes.push_back(superBox);
-	//maintenant faut faire ca en recurisif
 
+	std::vector<Box*> boxHorsCornell;
+
+	for (int b = 6; b < tabSphere.size(); b++) {
+		boxHorsCornell.push_back(tabSphere[b]->creeBoxAPartirObject());
+	}
+	//creation de box manuelle
+	/*Box* superBox = tabSphere[6]->creeBoxAPartirObject()->unionBox(tabSphere[7]->creeBoxAPartirObject());
+	superBox = superBox->unionBox(tabSphere[8]->creeBoxAPartirObject());
+	boundingBoxes.push_back(superBox);*/
+	//maintenant faut faire ca en recurisif
+	Box* gigaBox = Box::boxEnglobante(boxHorsCornell);
+	boundingBoxes.push_back(gigaBox);
 
 	//boucle principale
 	#pragma omp parallel for

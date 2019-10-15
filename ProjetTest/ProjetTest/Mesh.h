@@ -12,6 +12,5 @@ public:
 	std::vector<Vec3<float>> normales;
 	std::vector<int> triangles;
 	Intersect intersect(Rayon R);
-	Vec3<float> getNormal(Vec3<float> point);
 };
 
