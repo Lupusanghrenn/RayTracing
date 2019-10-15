@@ -23,6 +23,7 @@ int nbSphereRandom = 10;
 
 Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 	Intersect bestResult;
+	bestResult.t = 1000000.f;
 	for (int indexBox = 0; indexBox < bBox.size(); indexBox++) {
 		Intersect tmpResult;
 		if (bBox[indexBox]->childrens.size() > 0) {
@@ -256,7 +257,7 @@ void RayTracing::draw600600() {
 	long long min = sec / 60;
 	sec = sec % 60;
 
-	cout << "##\nDuration For : " << min << "min : "<< durationFor.count()<<" sec" << endl;
+	cout << "##\nDuration For : " << min << "min : "<< sec<<" sec" << endl;
 
 	cout << "Duration Total : " << durationFor.count()<<" sec : " << durationBox.count() << "ms" << endl;
 
