@@ -22,22 +22,45 @@ int nbMaxVecteurIndirect = 2;
 int nbSphereRandom = 10;
 
 Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
+	//test de bvh puis les spheres de cornell
 	Intersect bestResult;
-	bestResult.t = 1000000.f;
+	bestResult.t = std::nullopt;
 	for (int indexBox = 0; indexBox < bBox.size(); indexBox++) {
-		Intersect tmpResult;
-		if (bBox[indexBox]->childrens.size() > 0) {
-			tmpResult = closestSphereFromBox(bBox[indexBox]->childrens,R);
-		}
-		else {
-			tmpResult = bBox[indexBox]->child->intersect(R);
-		}	
-		float value = tmpResult.t.value_or(-1);
-		if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
-			bestResult = tmpResult;
-		}
+		Intersect tmpResultBox= bBox[indexBox]->intersect(R);
+		float valueBox = tmpResultBox.t.value_or(-1);
+		if (valueBox > 0.f && (valueBox < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
+			Intersect tmpResult;
+			tmpResult.t = std::nullopt;
+			if (bBox[indexBox]->childrens.size() > 0) {
+				tmpResult = closestSphereFromBox(bBox[indexBox]->childrens, R);
+			}
+			else {
+				tmpResult = bBox[indexBox]->child->intersect(R);
+			}
+			float value = tmpResult.t.value_or(-1);
+			if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
+				bestResult = tmpResult;
+			}
+		}		
 	}
-	return bestResult;
+
+	float valueBox = bestResult.t.value_or(-1);
+	if (valueBox > 0.f && (valueBox < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
+		return bestResult;
+	}
+	else {
+		//pas d intersection avec les spheres bvh on fait avec la cornell
+		for (int a = 0; a < 6; a++) {
+			Intersect tmpResult = tabSphere[a]->intersect(R);
+			float value = tmpResult.t.value_or(-1);
+			if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
+				bestResult = tmpResult;
+			}
+		}
+		return bestResult;
+	}
+
+	
 }
 
 Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
@@ -208,9 +231,9 @@ void RayTracing::draw600600() {
 	
 	//bounding box
 	//creation d une box pour chaque objet
-	for (int a = 0; a < 6; a++) {
+	/*for (int a = 0; a < 6; a++) {
 		boundingBoxes.push_back(tabSphere[a]->creeBoxAPartirObject());
-	}
+	}*/
 
 	std::vector<Box*> boxHorsCornell;
 
