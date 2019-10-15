@@ -16,7 +16,8 @@ int nbRayonRandom = 100;
 std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
 std::vector<Box*> boundingBoxes;
-int nbMaxVecteurIndirect = 1;
+int nbMaxVecteurIndirect = 3;
+int nbSphereRandom = 10;
 
 Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 	Intersect bestResult;
@@ -159,7 +160,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 		}
 		//finalLight = tabSphere[indexClosest].albedo.albedo * finalLight;
 		finalLight = finalLight * bestResult.object->color.color;
-		return finalLight +0.1f * indirectLight;
+		return finalLight +0.03f * indirectLight;
 
 	}
 	else {
@@ -192,7 +193,7 @@ void RayTracing::draw600600() {
 	tabSphere.push_back(&S3);
 
 	//on ajoute plein de sphere de test
-	for (int nbSphere = 0; nbSphere < 100; nbSphere++) {
+	for (int nbSphere = 0; nbSphere < nbSphereRandom; nbSphere++) {
 		Vec3<float> vecTmp = Vec3<float>{ (distribution01(generator) * 500.f) , (distribution01(generator) * 500.f), (distribution01(generator) * 500.f)};
 		tabSphere.push_back(new Sphere(vecTmp, 10.f, Albedo(0.5f)));
 	}
@@ -221,6 +222,8 @@ void RayTracing::draw600600() {
 	Box* gigaBox = Box::boxEnglobante(boxHorsCornell);
 	boundingBoxes.push_back(gigaBox);
 
+	std::cout << "PROGRESS ###" << std::endl;
+
 	//boucle principale
 	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)
@@ -234,11 +237,14 @@ void RayTracing::draw600600() {
 			Vec3<float> finalLight = RayTracing::kesseKisePazeOBouDutRaillon(ray, 0);
 			ppm.pixelMatrix[i][j] = Vector3<int>(std::clamp((int)finalLight.x, 0, 255), std::clamp((int)finalLight.y, 0, 255), std::clamp((int)finalLight.z, 0, 255));
 		}
+		if (i % 60 == 0) {
+			std::cout << "#";
+		}
 	}
 
 	//Creation de l image
 	//boucle de convertion
-	std::cout << "Generation du fichier";
+	std::cout << "##\nGeneration du fichier";
 	ppm.save("image.ppm");
 
 }
