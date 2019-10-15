@@ -118,7 +118,6 @@ Box* Box::unionBox(Box* box2) {
 
 Box* Box::boxEnglobante(std::vector<Box*> boxes)
 {
-	//pas d enfant
 	Vec3<float> pMin = boxes[0]->pointMin;
 	Vec3<float> pMax = boxes[0]->pointMax;
 
@@ -133,13 +132,13 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 			pMin.z = boxes[i]->pointMin.z;
 		}
 
-		if (pMax.x > boxes[i]->pointMax.x) {
+		if (pMax.x < boxes[i]->pointMax.x) {
 			pMax.x = boxes[i]->pointMax.x;
 		}
-		if (pMax.y > boxes[i]->pointMax.y) {
+		if (pMax.y < boxes[i]->pointMax.y) {
 			pMax.y = boxes[i]->pointMax.y;
 		}
-		if (pMax.z > boxes[i]->pointMax.z) {
+		if (pMax.z < boxes[i]->pointMax.z) {
 			pMax.z = boxes[i]->pointMax.z;
 		}
 	}
@@ -153,18 +152,74 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 		//on fera le sort plus tard
 		std::vector<Box*> vecGauche;
 		std::vector<Box*> vecDroite;
+		std::vector<Box*> sorted;
 
-		for (int indGauche = 0; indGauche < boxes.size() / 2; indGauche++) {
-			vecGauche.push_back(boxes[indGauche]);
+		//sort
+		//meilleur axe
+		float tailleX = pMax.x - pMin.x;
+		float tailleY = pMax.y - pMin.y;
+		float tailleZ = pMax.z - pMin.z;
+
+		if (tailleX > tailleY && tailleX > tailleZ) {
+			//sort selon l axe X
+			int taille = boxes.size();
+			for (int indexSort = 0; indexSort < taille; indexSort++) {
+				Box* min = boxes[0];
+				int indexBoxMin = 0;
+				for (int indexMin = 1; indexMin < boxes.size(); indexMin++) {
+					if (min->pointMin.x > boxes[indexMin]->pointMin.x) {
+						min = boxes[indexMin];
+						indexBoxMin = indexMin;
+					}
+				}
+				boxes.erase(boxes.begin()+indexBoxMin);
+				sorted.push_back(min);
+			}
+		}else if (tailleY > tailleX && tailleY > tailleZ) {
+			//sort selon l axe y
+			int taille = boxes.size();
+			for (int indexSort = 0; indexSort < taille; indexSort++) {
+				Box* min = boxes[0];
+				int indexBoxMin = 0;
+				for (int indexMin = 1; indexMin < boxes.size(); indexMin++) {
+					if (min->pointMin.y > boxes[indexMin]->pointMin.y) {
+						min = boxes[indexMin];
+						indexBoxMin = indexMin;
+					}
+				}
+				boxes.erase(boxes.begin() + indexBoxMin);
+				sorted.push_back(min);
+			}
+		} else {
+			//sort selon l axe Z
+			int taille = boxes.size();
+			for (int indexSort = 0; indexSort < taille; indexSort++) {
+				Box* min = boxes[0];
+				int indexBoxMin = 0;
+				for (int indexMin = 1; indexMin < boxes.size(); indexMin++) {
+					if (min->pointMin.z > boxes[indexMin]->pointMin.z) {
+						min = boxes[indexMin];
+						indexBoxMin = indexMin;
+					}
+				}
+				boxes.erase(boxes.begin() + indexBoxMin);
+				sorted.push_back(min);
+			}
 		}
 
-		for (int indDroite = vecGauche.size(); indDroite < boxes.size(); indDroite++) {
-			vecDroite.push_back(boxes[indDroite]);
+		for (int indGauche = 0; indGauche < sorted.size() / 2; indGauche++) {
+			vecGauche.push_back(sorted[indGauche]);
+		}
+
+		for (int indDroite = vecGauche.size(); indDroite < sorted.size(); indDroite++) {
+			vecDroite.push_back(sorted[indDroite]);
 		}
 
 		//recursivite
-		b->childrens.push_back(boxEnglobante(vecGauche));
-		b->childrens.push_back(boxEnglobante(vecDroite));
+		if (vecGauche.size() > 0) {
+			b->childrens.push_back(boxEnglobante(vecGauche));
+		}
+		b->childrens.push_back(boxEnglobante(vecDroite));		
 	}
 	return b;
 }

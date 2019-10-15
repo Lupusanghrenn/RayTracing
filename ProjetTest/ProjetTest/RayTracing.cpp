@@ -14,12 +14,12 @@ float tailleCube = 30.f;
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);
 std::uniform_real_distribution<float> distribution01(0.f, 1.f);
-int nbRayonRandom = 100;
+int nbRayonRandom = 30;
 std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
 std::vector<Box*> boundingBoxes;
-int nbMaxVecteurIndirect = 1;
-int nbSphereRandom = 1;
+int nbMaxVecteurIndirect = 2;
+int nbSphereRandom = 10;
 
 Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 	Intersect bestResult;
@@ -131,10 +131,10 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				impact = impact + 0.01 * directionL;
 				Rayon shadowRay(impact, directionL);
 
-				Intersect bestResult2;
+				Intersect bestResult2 = closestSphereFromBox(boundingBoxes, shadowRay);
 				Vec3<float> light = (posLampeSurf - impact);
 
-				for (int index = 0; index < tabSphere.size(); index++) {
+				/*for (int index = 0; index < tabSphere.size(); index++) {
 
 					Intersect res2 = tabSphere[index]->intersect(shadowRay);
 					float res2Value = res2.t.value_or(-1.f);
@@ -144,7 +144,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 					if (res2Value < bestResult2.t.value_or(-1) && res2Value >= 0.f) {
 						bestResult2 = res2;
 					}
-				}
+				}*/
 				if (bestResult2.t.value_or(-1) < 0.f || bestResult2.t.value_or(-1) > norm(light)) {
 					//On as pas de sphere qui gene notre oeil
 					float norme = norm(light);
@@ -256,13 +256,13 @@ void RayTracing::draw600600() {
 	long long min = sec / 60;
 	sec = sec % 60;
 
-	cout << "Duration For : " << min << "min : "<< durationFor.count()<<" sec" << endl;
+	cout << "##\nDuration For : " << min << "min : "<< durationFor.count()<<" sec" << endl;
 
 	cout << "Duration Total : " << durationFor.count()<<" sec : " << durationBox.count() << "ms" << endl;
 
 	//Creation de l image
 	//boucle de convertion
-	std::cout << "##\nGeneration du fichier";
+	std::cout << "\nGeneration du fichier";
 	ppm.save("image.ppm");
 
 }
