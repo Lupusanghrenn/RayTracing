@@ -5,6 +5,8 @@
 #include <algorithm> 
 #include <vector>
 #include <random>
+#include <chrono> 
+using namespace std::chrono;
 
 typedef shared_ptr<Object> PObject;
 
@@ -16,8 +18,8 @@ int nbRayonRandom = 100;
 std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
 std::vector<Box*> boundingBoxes;
-int nbMaxVecteurIndirect = 3;
-int nbSphereRandom = 10;
+int nbMaxVecteurIndirect = 1;
+int nbSphereRandom = 1;
 
 Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 	Intersect bestResult;
@@ -219,11 +221,16 @@ void RayTracing::draw600600() {
 	superBox = superBox->unionBox(tabSphere[8]->creeBoxAPartirObject());
 	boundingBoxes.push_back(superBox);*/
 	//maintenant faut faire ca en recurisif
+	auto startBox = high_resolution_clock::now();
 	Box* gigaBox = Box::boxEnglobante(boxHorsCornell);
+	auto stopBox = high_resolution_clock::now();
 	boundingBoxes.push_back(gigaBox);
+	auto durationBox = duration_cast<microseconds>(stopBox - startBox);
+	cout << "Duration Box : " << durationBox.count()<<"ms" << endl;	
 
 	std::cout << "PROGRESS ###" << std::endl;
 
+	auto startFor = high_resolution_clock::now();
 	//boucle principale
 	#pragma omp parallel for
 	for (int i = 0; i < nH; i++)
@@ -241,6 +248,17 @@ void RayTracing::draw600600() {
 			std::cout << "#";
 		}
 	}
+	auto stopFor = high_resolution_clock::now();
+	auto durationFor = duration_cast<seconds>(stopFor - startFor);
+	long long sec = durationFor.count();
+
+	//60 seconds in a minute
+	long long min = sec / 60;
+	sec = sec % 60;
+
+	cout << "Duration For : " << min << "min : "<< durationFor.count()<<" sec" << endl;
+
+	cout << "Duration Total : " << durationFor.count()<<" sec : " << durationBox.count() << "ms" << endl;
 
 	//Creation de l image
 	//boucle de convertion
