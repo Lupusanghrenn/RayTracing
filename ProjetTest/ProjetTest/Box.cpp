@@ -36,6 +36,8 @@ Box::Box(Vec3<float> pMin, Vec3<float> pMax) {
 
 Intersect Box::intersect(Rayon R) {
 	Intersect result;
+	/*result.t = intersectBox(R);
+	return result;*/
 
 	float tmin = (pointMin.x - R.origin.x) / R.direction.x;
 	float tmax = (pointMax.x - R.origin.x) / R.direction.x;
@@ -78,6 +80,88 @@ Intersect Box::intersect(Rayon R) {
 	//return true;
 	result.t = tmin;//a test
 	return result;
+}
+
+float max(float t1, float t2) {
+	if (t1 >= t2) {
+		return t1;
+	}
+	return t2;
+}
+
+float min(float t1, float t2) {
+	if (t1 <= t2) {
+		return t1;
+	}
+	return t2;
+}
+
+std::optional<float> Box::intersectBox2(Rayon r)
+{
+	Vec3<float> inv_direction = Vec3<float>{ 0,0,0 };
+	float t;
+	// r.dir is unit direction vector of ray
+	(r.direction.x == 0) ? inv_direction.x = std::numeric_limits<float>::infinity() : inv_direction.x = 1.0f / r.direction.x;
+	(r.direction.y == 0) ? inv_direction.y = std::numeric_limits<float>::infinity() : inv_direction.y = 1.0f / r.direction.y;
+	(r.direction.z == 0) ? inv_direction.z = std::numeric_limits<float>::infinity() : inv_direction.z = 1.0f / r.direction.z;
+
+	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+	// r.org is origin of ray
+	float t1 = (pointMin.x - r.origin.x) * inv_direction.x;
+	float t2 = (pointMax.x - r.origin.x) * inv_direction.x;
+	float t3 = (pointMin.y - r.origin.y) * inv_direction.y;
+	float t4 = (pointMax.y - r.origin.y) * inv_direction.y;
+	float t5 = (pointMin.z - r.origin.z) * inv_direction.z;
+	float t6 = (pointMax.z - r.origin.z) * inv_direction.z;
+
+	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	if (tmax < 0)
+	{
+		t = tmax;
+		return nullopt;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tmin > tmax)
+	{
+		t = tmax;
+		return nullopt;
+	}
+
+	t = tmin;
+	return t;
+}
+
+std::optional<float> Box::intersectBox(Rayon r) {
+	Vec3<float> dir = 1.0/ r.direction;
+
+	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+	// r.org is origin of ray
+	float t1 = (pointMin.x - r.origin.x) * dir.x;
+	float t2 = (pointMax.x - r.origin.x) * dir.x;
+	float t3 = (pointMin.y - r.origin.y) * dir.y;
+	float t4 = (pointMax.y - r.origin.y) * dir.y;
+	float t5 = (pointMin.z - r.origin.z) * dir.z;
+	float t6 = (pointMax.z - r.origin.z) * dir.z;
+
+	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	if (tmax < 0)
+	{
+		return std::nullopt;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tmin > tmax)
+	{
+		return std::nullopt;
+	}
+	return tmin;
 }
 
 Box* Box::creeBoxAPartirObject()

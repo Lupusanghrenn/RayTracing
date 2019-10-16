@@ -21,18 +21,18 @@ std::vector<Box*> boundingBoxes;
 int nbMaxVecteurIndirect = 2;
 int nbSphereRandom = 10;
 
-Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
+Intersect bvh(std::vector<Box*> bBox, Rayon R) {
 	//test de bvh puis les spheres de cornell
 	Intersect bestResult;
 	bestResult.t = std::nullopt;
 	for (int indexBox = 0; indexBox < bBox.size(); indexBox++) {
-		Intersect tmpResultBox= bBox[indexBox]->intersect(R);
+		Intersect tmpResultBox = bBox[indexBox]->intersect(R);
 		float valueBox = tmpResultBox.t.value_or(-1);
 		if (valueBox > 0.f && (valueBox < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
 			Intersect tmpResult;
 			tmpResult.t = std::nullopt;
 			if (bBox[indexBox]->childrens.size() > 0) {
-				tmpResult = closestSphereFromBox(bBox[indexBox]->childrens, R);
+				tmpResult = bvh(bBox[indexBox]->childrens, R);
 			}
 			else {
 				tmpResult = bBox[indexBox]->child->intersect(R);
@@ -41,26 +41,28 @@ Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 			if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
 				bestResult = tmpResult;
 			}
-		}		
+		}
 	}
+	return bestResult;
+}
 
-	float valueBox = bestResult.t.value_or(-1);
-	if (valueBox > 0.f && (valueBox < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
-		return bestResult;
+Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
+	Intersect bResult = bvh(bBox,R);
+	float valueBox = bResult.t.value_or(-1);
+	if (valueBox > 0.f && (valueBox < bResult.t.value_or(-1) || bResult.t.value_or(-1) < 0.f)) {
+		return bResult;
 	}
 	else {
 		//pas d intersection avec les spheres bvh on fait avec la cornell
 		for (int a = 0; a < 6; a++) {
 			Intersect tmpResult = tabSphere[a]->intersect(R);
 			float value = tmpResult.t.value_or(-1);
-			if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
-				bestResult = tmpResult;
+			if (value > 0.f && (value < bResult.t.value_or(-1) || bResult.t.value_or(-1) < 0.f)) {
+				bResult = tmpResult;
 			}
 		}
-		return bestResult;
-	}
-
-	
+		return bResult;
+	}	
 }
 
 Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {

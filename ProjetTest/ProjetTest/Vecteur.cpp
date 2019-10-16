@@ -44,6 +44,11 @@ Vec3<T> operator/(const Vec3<T>& a, const float b) {
 }
 
 template <typename T>
+Vec3<T> operator/(const float a, const Vec3<T>& b) {
+	return Vec3<T>{ a/b.x, a/b.y, a/b.z};
+}
+
+template <typename T>
 Vec3<T> operator-(const Vec3<T>& a, const Vec3<T>& b) {
 	return Vec3<T>{ a.x - b.x, a.y - b.y, a.z - b.z };
 }

@@ -14,6 +14,8 @@ public:
 	Intersect intersect(Rayon R);
 	Box* creeBoxAPartirObject();
 	Box* unionBox(Box* box2);
+	std::optional<float> intersectBox(Rayon r);
+	std::optional<float> intersectBox2(Rayon r);
 	static Box* boxEnglobante(std::vector<Box*> boxes);
 };
 

@@ -8,6 +8,7 @@
 #include "..//ProjetTest/Intersect.cpp"
 #include "..//ProjetTest/Albedo.cpp"
 #include "..//ProjetTest/Couleur.cpp"
+#include "..//ProjetTest/Box.cpp"
 #include <optional>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -47,6 +48,39 @@ namespace UnitTestSyntheseImg
 				Assert::AreEqual(4.f, res);
 				auto normal = S.intersect(R).normal;
 				Assert::AreEqual(true, Vec3<float>{0, -1, 0} == normal);
+			}
+		}
+
+		TEST_METHOD(TestIntersectBox1)
+		{
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{1.f, 0.f, 0.f});
+			Box S(Vec3<float>{4.f, 0.f, 0.f}, Vec3<float>{8.f, 4.f, 1.f});
+			if (auto res = S.intersect(R).t.value_or(-1.f)) {
+				auto normal = S.intersect(R).normal;
+
+				Assert::AreEqual(4.f, res);
+				//Assert::AreEqual(true, Vec3<float>{-1, 0, 0} == normal);
+
+			}
+		}
+
+		TEST_METHOD(TestIntersectBox2) {
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{-1.f, 0.f, 0.f});
+			Box S(Vec3<float>{-4.f, 0.f, 0.f}, Vec3<float>{-8.f, 4.f, 1.f});
+			if (auto res = S.intersect(R).t.value_or(-1.f)) {
+				Assert::AreEqual(4.f, res);
+				auto normal = S.intersect(R).normal;
+				//Assert::AreEqual(true, Vec3<float>{1, 0, 0} == normal);
+			}
+		}
+
+		TEST_METHOD(TestIntersectBox3) {
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{1.f, 0.f, 0.f});
+			Box S(Vec3<float>{-4.f, 3.f, -1.f}, Vec3<float>{4.f, 4.f, 1.f});
+			if (auto res = S.intersect(R).t.value_or(-1.f)) {
+				Assert::AreEqual(3.f, res);
+				auto normal = S.intersect(R).normal;
+				//Assert::AreEqual(true, Vec3<float>{0, -1, 0} == normal);
 			}
 		}
 	};
