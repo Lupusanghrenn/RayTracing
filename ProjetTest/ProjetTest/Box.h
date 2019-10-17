@@ -2,6 +2,8 @@
 #include "Vecteur.cpp"
 #include "Object.h"
 #include <vector>
+#include <algorithm>
+#include <functional>
 
 class Box
 {

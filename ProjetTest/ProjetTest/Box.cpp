@@ -36,7 +36,7 @@ Box::Box(Vec3<float> pMin, Vec3<float> pMax) {
 
 Intersect Box::intersect(Rayon R) {
 	Intersect result;
-	/*result.t = intersectBox(R);
+	/*result.t = intersectBox2(R);
 	return result;*/
 
 	float tmin = (pointMin.x - R.origin.x) / R.direction.x;
@@ -98,41 +98,38 @@ float min(float t1, float t2) {
 
 std::optional<float> Box::intersectBox2(Rayon r)
 {
-	Vec3<float> inv_direction = Vec3<float>{ 0,0,0 };
-	float t;
-	// r.dir is unit direction vector of ray
-	(r.direction.x == 0) ? inv_direction.x = std::numeric_limits<float>::infinity() : inv_direction.x = 1.0f / r.direction.x;
-	(r.direction.y == 0) ? inv_direction.y = std::numeric_limits<float>::infinity() : inv_direction.y = 1.0f / r.direction.y;
-	(r.direction.z == 0) ? inv_direction.z = std::numeric_limits<float>::infinity() : inv_direction.z = 1.0f / r.direction.z;
+	float tmin, tmax, tymin, tymax, tzmin, tzmax;
+	Vec3<float> bounds[] = { pointMin, pointMax };
 
-	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
-	// r.org is origin of ray
-	float t1 = (pointMin.x - r.origin.x) * inv_direction.x;
-	float t2 = (pointMax.x - r.origin.x) * inv_direction.x;
-	float t3 = (pointMin.y - r.origin.y) * inv_direction.y;
-	float t4 = (pointMax.y - r.origin.y) * inv_direction.y;
-	float t5 = (pointMin.z - r.origin.z) * inv_direction.z;
-	float t6 = (pointMax.z - r.origin.z) * inv_direction.z;
+	Vec3<float> invdir = 1.f / r.direction;
+	int sign[3];
+	sign[0] = (invdir.x < 0);
+	sign[1] = (invdir.y < 0);
+	sign[2] = (invdir.z < 0);
 
-	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
-	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+	tmin = (bounds[sign[0]].x - r.origin.x) * invdir.x;
+	tmax = (bounds[1 - sign[0]].x - r.origin.x) * invdir.x;
+	tymin = (bounds[sign[1]].y - r.origin.y) * invdir.y;
+	tymax = (bounds[1 - sign[1]].y - r.origin.y) * invdir.y;
 
-	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
-	if (tmax < 0)
-	{
-		t = tmax;
-		return nullopt;
-	}
+	if ((tmin > tymax) || (tymin > tmax))
+		return std::nullopt;
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
 
-	// if tmin > tmax, ray doesn't intersect AABB
-	if (tmin > tmax)
-	{
-		t = tmax;
-		return nullopt;
-	}
+	tzmin = (bounds[sign[2]].z - r.origin.z) * invdir.z;
+	tzmax = (bounds[1 - sign[2]].z - r.origin.z) * invdir.z;
 
-	t = tmin;
-	return t;
+	if ((tmin > tzmax) || (tzmin > tmax))
+		return std::nullopt;
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+
+	return tmin;
 }
 
 std::optional<float> Box::intersectBox(Rayon r) {
@@ -200,6 +197,27 @@ Box* Box::unionBox(Box* box2) {
 	return b;
 }
 
+struct {
+	bool operator()(Box* a, Box* b) const
+	{
+		return a->pointMax.x < b->pointMax.x;
+	}
+} customLessX;
+
+struct {
+	bool operator()(Box* a, Box* b) const
+	{
+		return a->pointMax.y < b->pointMax.y;
+	}
+} customLessY;
+
+struct {
+	bool operator()(Box* a, Box* b) const
+	{
+		return a->pointMax.z < b->pointMax.z;
+	}
+} customLessZ;
+
 Box* Box::boxEnglobante(std::vector<Box*> boxes)
 {
 	Vec3<float> pMin = boxes[0]->pointMin;
@@ -236,7 +254,6 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 		//on fera le sort plus tard
 		std::vector<Box*> vecGauche;
 		std::vector<Box*> vecDroite;
-		std::vector<Box*> sorted;
 
 		//sort
 		//meilleur axe
@@ -246,7 +263,9 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 
 		if (tailleX > tailleY && tailleX > tailleZ) {
 			//sort selon l axe X
-			int taille = boxes.size();
+			std::sort(boxes.begin(), boxes.end(), customLessX);
+
+			/*int taille = boxes.size();
 			for (int indexSort = 0; indexSort < taille; indexSort++) {
 				Box* min = boxes[0];
 				int indexBoxMin = 0;
@@ -258,10 +277,11 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 				}
 				boxes.erase(boxes.begin()+indexBoxMin);
 				sorted.push_back(min);
-			}
+			}*/
 		}else if (tailleY > tailleX && tailleY > tailleZ) {
 			//sort selon l axe y
-			int taille = boxes.size();
+			std::sort(boxes.begin(), boxes.end(), customLessY);
+			/*int taille = boxes.size();
 			for (int indexSort = 0; indexSort < taille; indexSort++) {
 				Box* min = boxes[0];
 				int indexBoxMin = 0;
@@ -273,10 +293,11 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 				}
 				boxes.erase(boxes.begin() + indexBoxMin);
 				sorted.push_back(min);
-			}
+			}*/
 		} else {
 			//sort selon l axe Z
-			int taille = boxes.size();
+			std::sort(boxes.begin(), boxes.end(), customLessZ);
+			/*int taille = boxes.size();
 			for (int indexSort = 0; indexSort < taille; indexSort++) {
 				Box* min = boxes[0];
 				int indexBoxMin = 0;
@@ -288,21 +309,21 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 				}
 				boxes.erase(boxes.begin() + indexBoxMin);
 				sorted.push_back(min);
-			}
+			}*/
 		}
 
-		for (int indGauche = 0; indGauche < sorted.size() / 2; indGauche++) {
-			vecGauche.push_back(sorted[indGauche]);
+		for (int indGauche = 0; indGauche < boxes.size() / 2; indGauche++) {
+			vecGauche.push_back(boxes[indGauche]);
 		}
 
-		for (int indDroite = vecGauche.size(); indDroite < sorted.size(); indDroite++) {
-			vecDroite.push_back(sorted[indDroite]);
+		for (int indDroite = vecGauche.size(); indDroite < boxes.size(); indDroite++) {
+			vecDroite.push_back(boxes[indDroite]);
 		}
 
 		//recursivite
-		if (vecGauche.size() > 0) {
+		//if (vecGauche.size() > 0) {
 			b->childrens.push_back(boxEnglobante(vecGauche));
-		}
+		//}
 		b->childrens.push_back(boxEnglobante(vecDroite));		
 	}
 	return b;

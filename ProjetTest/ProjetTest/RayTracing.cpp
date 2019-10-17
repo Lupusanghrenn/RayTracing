@@ -20,6 +20,8 @@ std::vector<Lumiere> tabLumiere;
 std::vector<Box*> boundingBoxes;
 int nbMaxVecteurIndirect = 2;
 int nbSphereRandom = 10;
+int profondeurMax = 4;
+
 
 Intersect bvh(std::vector<Box*> bBox, Rayon R) {
 	//test de bvh puis les spheres de cornell
@@ -66,7 +68,7 @@ Intersect closestSphereFromBox(std::vector<Box*> bBox, Rayon R) {
 }
 
 Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
-	if (profondeur > 3) {
+	if (profondeur > profondeurMax) {
 		//std::cout <<"profondeur max"; probleme avec la profondeur --> intersect ?
 		return Vec3<float>{0.f, 0.f, 0.f};
 	}
@@ -85,17 +87,17 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 	}*/
 	
 
-	if (bestResult.t.value_or(-1) >= 0.f) {
+	if (bestResult.t.value_or(-1) > 0.f) {
 		//lancer de rayon jusqu a la lumiere
 		float t = bestResult.t.value_or(-1);
-		Vec3<float> impact = ray.origin + t * ray.direction;//position du point d intersection
+		Vec3<float> impact = ray.origin + t * ray.direction + 0.1f*bestResult.normal;//position du point d intersection
 
 		//si jamais on est sur une sphere qui reflete
 		if (bestResult.object->albedo.albedo == 1.f) {
 			//Vec3<float> normale = impact - tabSphere[indexClosest].position;
 			//normalize(normale);
 			Vec3<float> normale = bestResult.normal;
-			impact = impact + 0.01 * normale;//on �vit� l'acn�e
+			//impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
 			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
 			normalize(reflectDirection);
@@ -110,10 +112,10 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 			//random 
 			Vec3<float> rayonRandom = bestResult.normal;
-			Vec3<float> randomTweak = Vec3<float>{ distribution01(generator),distribution01(generator),distribution01(generator) };
+			Vec3<float> randomTweak = Vec3<float>{ distribution01(generator)*10.f,distribution01(generator) * 10.f,distribution01(generator) * 10.f};
 			rayonRandom = rayonRandom + randomTweak;
 			normalize(rayonRandom);
-			impact = impact + 0.03 * rayonRandom;//on �vit� l'acn�e
+			//impact = impact + 0.03 * rayonRandom;//on �vit� l'acn�e
 			Rayon reflect = Rayon(impact, rayonRandom);
 			indirectLight = indirectLight + kesseKisePazeOBouDutRaillon(reflect, profondeur + 1);
 			/*float random1 = distribution01(generator);
@@ -154,7 +156,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				posLampeSurf.z += randomz;
 				Vec3<float> directionL = posLampeSurf - impact;
 				normalize(directionL);
-				impact = impact + 0.01 * directionL;
+				//impact = impact + 0.01 * directionL;
 				Rayon shadowRay(impact, directionL);
 
 				Intersect bestResult2 = closestSphereFromBox(boundingBoxes, shadowRay);
@@ -222,7 +224,7 @@ void RayTracing::draw600600() {
 
 	//on ajoute plein de sphere de test
 	for (int nbSphere = 0; nbSphere < nbSphereRandom; nbSphere++) {
-		Vec3<float> vecTmp = Vec3<float>{ (distribution01(generator) * 500.f) , (distribution01(generator) * 500.f), (distribution01(generator) * 500.f)};
+		Vec3<float> vecTmp = Vec3<float>{ (distribution01(generator) * 550.f) , (distribution01(generator) * 550.f), (distribution01(generator) * 550.f)};
 		tabSphere.push_back(new Sphere(vecTmp, 10.f, Albedo(0.5f)));
 	}
 	//Camera ortho

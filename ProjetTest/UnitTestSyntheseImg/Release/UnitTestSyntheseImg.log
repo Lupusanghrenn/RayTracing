@@ -1,14 +1,14 @@
 ﻿  UnitTestSyntheseImg.cpp
-D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(208,20): warning C4018: '<' : incompatibilité signed/unsigned
-D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(253,37): warning C4018: '<' : incompatibilité signed/unsigned
-D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(268,37): warning C4018: '<' : incompatibilité signed/unsigned
-D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(283,37): warning C4018: '<' : incompatibilité signed/unsigned
-D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(294,37): warning C4018: '<' : incompatibilité signed/unsigned
-D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(298,52): warning C4018: '<' : incompatibilité signed/unsigned
+D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(205,20): warning C4018: '<' : incompatibilité signed/unsigned
+D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(250,37): warning C4018: '<' : incompatibilité signed/unsigned
+D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(265,37): warning C4018: '<' : incompatibilité signed/unsigned
+D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(280,37): warning C4018: '<' : incompatibilité signed/unsigned
+D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(291,37): warning C4018: '<' : incompatibilité signed/unsigned
+D:\Github\RayTracing\ProjetTest\ProjetTest\Box.cpp(295,52): warning C4018: '<' : incompatibilité signed/unsigned
      Création de la bibliothèque D:\Github\RayTracing\ProjetTest\Release\UnitTestSyntheseImg.lib et de l'objet D:\Github\RayTracing\ProjetTest\Release\UnitTestSyntheseImg.exp
   Génération de code en cours
-  15 of 196 functions ( 7.7%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+  2 of 205 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    19 functions had inline decision re-evaluated but remain unchanged
   Fin de la génération du code
   UnitTestSyntheseImg.vcxproj -> D:\Github\RayTracing\ProjetTest\Release\UnitTestSyntheseImg.dll

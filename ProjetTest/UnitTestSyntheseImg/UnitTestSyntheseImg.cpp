@@ -66,7 +66,7 @@ namespace UnitTestSyntheseImg
 
 		TEST_METHOD(TestIntersectBox2) {
 			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{-1.f, 0.f, 0.f});
-			Box S(Vec3<float>{-4.f, 0.f, 0.f}, Vec3<float>{-8.f, 4.f, 1.f});
+			Box S(Vec3<float>{-4.f, 0.f, -1.f}, Vec3<float>{-8.f, 4.f, 1.f});
 			if (auto res = S.intersect(R).t.value_or(-1.f)) {
 				Assert::AreEqual(4.f, res);
 				auto normal = S.intersect(R).normal;
@@ -75,13 +75,52 @@ namespace UnitTestSyntheseImg
 		}
 
 		TEST_METHOD(TestIntersectBox3) {
-			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{1.f, 0.f, 0.f});
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{0.f, 1.f, 0.f});
 			Box S(Vec3<float>{-4.f, 3.f, -1.f}, Vec3<float>{4.f, 4.f, 1.f});
 			if (auto res = S.intersect(R).t.value_or(-1.f)) {
 				Assert::AreEqual(3.f, res);
 				auto normal = S.intersect(R).normal;
 				//Assert::AreEqual(true, Vec3<float>{0, -1, 0} == normal);
 			}
+		}
+
+		TEST_METHOD(TestIntersectBox4) {
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{0.f, -1.f, 0.f});
+			Box S(Vec3<float>{-4.f, -3.f, -1.f}, Vec3<float>{4.f, -4.f, 1.f});
+			if (auto res = S.intersect(R).t.value_or(-1.f)) {
+				Assert::AreEqual(3.f, res);
+				auto normal = S.intersect(R).normal;
+				//Assert::AreEqual(true, Vec3<float>{0, -1, 0} == normal);
+			}
+		}
+
+		TEST_METHOD(TestIntersectBox5) {
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{0.f, 0.f, 1.f});
+			Box S(Vec3<float>{-4.f, 0.f, 3.f}, Vec3<float>{4.f, 0.f, 4.f});
+			if (auto res = S.intersect(R).t.value_or(-1.f)) {
+				Assert::AreEqual(3.f, res);
+				auto normal = S.intersect(R).normal;
+				//Assert::AreEqual(true, Vec3<float>{0, -1, 0} == normal);
+			}
+		}
+
+		TEST_METHOD(TestIntersectBox6) {
+			Rayon R(Vec3<float>{0.f, 0.f, 0.f}, Vec3<float>{0.f, 0.f, -1.f});
+			Box S(Vec3<float>{-4.f, 0.f, -3.f}, Vec3<float>{4.f, 0.f, -4.f});
+			if (auto res = S.intersect(R).t.value_or(-1.f)) {
+				Assert::AreEqual(3.f, res);
+				auto normal = S.intersect(R).normal;
+				//Assert::AreEqual(true, Vec3<float>{0, -1, 0} == normal);
+			}
+		}
+
+		TEST_METHOD(TestInvertectedVector) {
+			Vec3<float> vec = { 2.f,2.f,2.f };
+			Vec3<float> result = 1.0f / vec;
+			Assert::AreEqual(0.5f, result.x);
+			Assert::AreEqual(0.5f, result.y);
+			Assert::AreEqual(0.5f, result.z);
+			//Assert::AreEqual(result, Vec3<float>{ 0.5f,0.5f,0.5f });
 		}
 	};
 }
