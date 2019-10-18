@@ -1,4 +1,3 @@
-#pragma once
 #include "RayTracing.h"
 #include "PPM.h"
 #include <iostream> 

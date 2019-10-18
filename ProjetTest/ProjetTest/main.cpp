@@ -1,4 +1,3 @@
-#pragma once
 #include "Rayon.h"
 #include "RayTracing.h"
 #include "Sphere.h"
