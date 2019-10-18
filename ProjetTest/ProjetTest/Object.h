@@ -1,5 +1,5 @@
 #pragma once
-#include "Vecteur.cpp"
+#include "Vecteur.h"
 #include <optional>
 #include "Rayon.h"
 #include "Albedo.h"

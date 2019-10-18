@@ -1,5 +1,5 @@
 #pragma once
-#include "Vecteur.cpp"
+#include "Vecteur.h"
 #include "Object.h"
 #include <vector>
 #include <algorithm>

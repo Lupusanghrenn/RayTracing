@@ -8,8 +8,8 @@ Sphere::Sphere(Vec3<float> c, float r, Albedo albe) {
 
 Box* Sphere::creeBoxAPartirObject()
 {
-	Vec3<float> pointMin = position - Vec3<float>{rayon, rayon, 0};
-	Vec3<float> pointMax = position + Vec3<float>{rayon, rayon, 0};
+	Vec3<float> pointMin = position - Vec3<float>{rayon, rayon, rayon};
+	Vec3<float> pointMax = position + Vec3<float>{rayon, rayon, rayon};
 	Box* b = new Box(pointMin, pointMax);
 	b->child = this;
 	return b;

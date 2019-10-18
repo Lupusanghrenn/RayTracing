@@ -1,4 +1,3 @@
-#pragma once
 #include "RayTracing.h"
 #include "PPM.h"
 #include <iostream> 
@@ -6,21 +5,22 @@
 #include <vector>
 #include <random>
 #include <chrono> 
+#include <memory>
 using namespace std::chrono;
 
-typedef shared_ptr<Object> PObject;
+typedef std::shared_ptr<Object> PObject;
 
 float tailleCube = 30.f;
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);
 std::uniform_real_distribution<float> distribution01(0.f, 1.f);
-int nbRayonRandom = 30;
+int nbRayonRandom = 2;
 std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
 std::vector<Box*> boundingBoxes;
-int nbMaxVecteurIndirect = 2;
-int nbSphereRandom = 10;
-int profondeurMax = 4;
+int nbMaxVecteurIndirect = 1;
+int nbSphereRandom = 3;
+int profondeurMax = 1;
 
 
 Intersect bvh(std::vector<Box*> bBox, Rayon R) {
