@@ -5,9 +5,10 @@
 #include <vector>
 #include <random>
 #include <chrono> 
+#include <memory>
 using namespace std::chrono;
 
-typedef shared_ptr<Object> PObject;
+typedef std::shared_ptr<Object> PObject;
 
 float tailleCube = 30.f;
 std::default_random_engine generator;
