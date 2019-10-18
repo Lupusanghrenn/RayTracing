@@ -1,4 +1,4 @@
-// Vecteur.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
+// Vecteur.h : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
 #pragma once
 #include <iostream>

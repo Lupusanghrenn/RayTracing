@@ -1,5 +1,5 @@
 #pragma once
-#include "Vecteur.cpp"
+#include "Vecteur.h"
 #include "Albedo.h"
 #include "Couleur.h"
 #include "Box.h"

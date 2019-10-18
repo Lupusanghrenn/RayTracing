@@ -1,6 +1,6 @@
 #pragma once
 #include "Object.h"
-#include "Vecteur.cpp"
+#include "Vecteur.h"
 #include <vector>
 
 class Mesh : public Object
