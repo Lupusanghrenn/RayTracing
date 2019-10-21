@@ -5,35 +5,6 @@ Box::Box(Vec3<float> pMin, Vec3<float> pMax) {
 	pointMax = pMax;
 }
 
-//Box::Box(Box* b1, Box* b2)
-//{
-//	Vec3<float> pMin = b1->pointMin;
-//	if (pMin.x > b2->pointMin.x) {
-//		pMin.x = b2->pointMin.x;
-//	}
-//	if (pMin.y > b2->pointMin.y) {
-//		pMin.y = b2->pointMin.y;
-//	}
-//	if (pMin.z > b2->pointMin.z) {
-//		pMin.z = b2->pointMin.z;
-//	}
-//
-//	Vec3<float> pMax = b1->pointMax;
-//	if (pMax.x > b2->pointMax.x) {
-//		pMax.x = b2->pointMax.x;
-//	}
-//	if (pMax.y > b2->pointMax.y) {
-//		pMax.y = b2->pointMax.y;
-//	}
-//	if (pMax.z > b2->pointMax.z) {
-//		pMax.z = b2->pointMax.z;
-//	}
-//
-//	Box* b = new Box(pMin, pMax);
-//	b->childrens.push_back(b1);
-//	b->childrens.push_back(b2);
-//}
-
 Intersect Box::intersect(Rayon R) {
 	Intersect result;
 	/*result.t = intersectBox2(R);
@@ -265,51 +236,13 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 			//sort selon l axe X
 			std::sort(boxes.begin(), boxes.end(), customLessX);
 
-			/*int taille = boxes.size();
-			for (int indexSort = 0; indexSort < taille; indexSort++) {
-				Box* min = boxes[0];
-				int indexBoxMin = 0;
-				for (int indexMin = 1; indexMin < boxes.size(); indexMin++) {
-					if (min->pointMin.x > boxes[indexMin]->pointMin.x) {
-						min = boxes[indexMin];
-						indexBoxMin = indexMin;
-					}
-				}
-				boxes.erase(boxes.begin()+indexBoxMin);
-				sorted.push_back(min);
-			}*/
 		}else if (tailleY > tailleX && tailleY > tailleZ) {
 			//sort selon l axe y
 			std::sort(boxes.begin(), boxes.end(), customLessY);
-			/*int taille = boxes.size();
-			for (int indexSort = 0; indexSort < taille; indexSort++) {
-				Box* min = boxes[0];
-				int indexBoxMin = 0;
-				for (int indexMin = 1; indexMin < boxes.size(); indexMin++) {
-					if (min->pointMin.y > boxes[indexMin]->pointMin.y) {
-						min = boxes[indexMin];
-						indexBoxMin = indexMin;
-					}
-				}
-				boxes.erase(boxes.begin() + indexBoxMin);
-				sorted.push_back(min);
-			}*/
+
 		} else {
 			//sort selon l axe Z
 			std::sort(boxes.begin(), boxes.end(), customLessZ);
-			/*int taille = boxes.size();
-			for (int indexSort = 0; indexSort < taille; indexSort++) {
-				Box* min = boxes[0];
-				int indexBoxMin = 0;
-				for (int indexMin = 1; indexMin < boxes.size(); indexMin++) {
-					if (min->pointMin.z > boxes[indexMin]->pointMin.z) {
-						min = boxes[indexMin];
-						indexBoxMin = indexMin;
-					}
-				}
-				boxes.erase(boxes.begin() + indexBoxMin);
-				sorted.push_back(min);
-			}*/
 		}
 
 		for (int indGauche = 0; indGauche < boxes.size() / 2; indGauche++) {
@@ -321,9 +254,7 @@ Box* Box::boxEnglobante(std::vector<Box*> boxes)
 		}
 
 		//recursivite
-		//if (vecGauche.size() > 0) {
-			b->childrens.push_back(boxEnglobante(vecGauche));
-		//}
+		b->childrens.push_back(boxEnglobante(vecGauche));
 		b->childrens.push_back(boxEnglobante(vecDroite));		
 	}
 	return b;

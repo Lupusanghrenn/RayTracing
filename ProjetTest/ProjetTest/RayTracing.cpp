@@ -14,13 +14,13 @@ float tailleCube = 30.f;
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(-tailleCube / 2.f, tailleCube / 2.f);
 std::uniform_real_distribution<float> distribution01(0.f, 1.f);
-int nbRayonRandom = 2;
+int nbRayonRandom = 10;
 std::vector<Object*> tabSphere;
 std::vector<Lumiere> tabLumiere;
 std::vector<Box*> boundingBoxes;
-int nbMaxVecteurIndirect = 1;
-int nbSphereRandom = 3;
-int profondeurMax = 1;
+int nbMaxVecteurIndirect = 2;
+int nbSphereRandom = 50;
+int profondeurMax = 3;
 
 
 Intersect bvh(std::vector<Box*> bBox, Rayon R) {
@@ -77,15 +77,6 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 	bestResult = closestSphereFromBox(boundingBoxes, ray);
 	
-	/*for (int index = 0; index < tabSphere.size(); index++) {
-		Intersect res = tabSphere[index]->intersect(ray);
-		float value = res.t.value_or(-1.f);
-		if (value > 0.f && (value < bestResult.t.value_or(-1) || bestResult.t.value_or(-1) < 0.f)) {
-			bestResult = res;
-			indexClosest = index;
-		}
-	}*/
-	
 
 	if (bestResult.t.value_or(-1) > 0.f) {
 		//lancer de rayon jusqu a la lumiere
@@ -94,10 +85,7 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 
 		//si jamais on est sur une sphere qui reflete
 		if (bestResult.object->albedo.albedo == 1.f) {
-			//Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			//normalize(normale);
 			Vec3<float> normale = bestResult.normal;
-			//impact = impact + 0.01 * normale;//on �vit� l'acn�e
 			Vec3<float> moinsI = Vec3<float>{-ray.direction.x,-ray.direction.y ,-ray.direction.z };
 			Vec3<float> reflectDirection=dot(moinsI,normale)* 2 * normale;//R = 2*N*(-I.N)+I
 			normalize(reflectDirection);
@@ -118,27 +106,6 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 			//impact = impact + 0.03 * rayonRandom;//on �vit� l'acn�e
 			Rayon reflect = Rayon(impact, rayonRandom);
 			indirectLight = indirectLight + kesseKisePazeOBouDutRaillon(reflect, profondeur + 1);
-			/*float random1 = distribution01(generator);
-			float random2 = distribution01(generator);
-
-			float phi = 2 * std::_Pi * random1;
-			float theta = std::acos(random2);
-
-			float x = std::cos(2 * std::_Pi * random1) * std::sqrt((1 - random2) * (1 - random2));
-			float x = std::sin(2 * std::_Pi * random1) * std::sqrt((1 - random2) * (1 - random2));
-			float z = random2;*/
-
-			//ok on fait le meme rayon que si on faisait du mirroir pour faire les lumi�res on fera les projections en h�misphere 
-
-			/*Vec3<float> normale = impact - tabSphere[indexClosest].position;
-			normalize(normale);*/
-			//Vec3<float> normale = bestResult.normal;
-			//impact = impact + 0.01 * normale;//on �vit� l'acn�e
-			//Vec3<float> moinsI = Vec3<float>{ -ray.direction.x,-ray.direction.y ,-ray.direction.z };
-			//Vec3<float> reflectDirection = dot(moinsI, normale) * 2 * normale + ray.direction;//R = 2*N*(-I.N)+I
-			//normalize(reflectDirection);
-			//Rayon reflect = Rayon(impact, reflectDirection);
-			//indirectLight = indirectLight + 0.2f * kesseKisePazeOBouDutRaillon(reflect,profondeur+1);
 		}
 
 		//lumiere surfacique
@@ -162,17 +129,6 @@ Vec3<float> RayTracing::kesseKisePazeOBouDutRaillon(Rayon ray, int profondeur) {
 				Intersect bestResult2 = closestSphereFromBox(boundingBoxes, shadowRay);
 				Vec3<float> light = (posLampeSurf - impact);
 
-				/*for (int index = 0; index < tabSphere.size(); index++) {
-
-					Intersect res2 = tabSphere[index]->intersect(shadowRay);
-					float res2Value = res2.t.value_or(-1.f);
-					if (bestResult2.t.value_or(-1) == -1.f) {
-						bestResult2 = res2;
-					}
-					if (res2Value < bestResult2.t.value_or(-1) && res2Value >= 0.f) {
-						bestResult2 = res2;
-					}
-				}*/
 				if (bestResult2.t.value_or(-1) < 0.f || bestResult2.t.value_or(-1) > norm(light)) {
 					//On as pas de sphere qui gene notre oeil
 					float norme = norm(light);
@@ -234,20 +190,12 @@ void RayTracing::draw600600() {
 	PPM ppm(nH, nW, 255);
 	
 	//bounding box
-	//creation d une box pour chaque objet
-	/*for (int a = 0; a < 6; a++) {
-		boundingBoxes.push_back(tabSphere[a]->creeBoxAPartirObject());
-	}*/
 
 	std::vector<Box*> boxHorsCornell;
 
 	for (int b = 6; b < tabSphere.size(); b++) {
 		boxHorsCornell.push_back(tabSphere[b]->creeBoxAPartirObject());
 	}
-	//creation de box manuelle
-	/*Box* superBox = tabSphere[6]->creeBoxAPartirObject()->unionBox(tabSphere[7]->creeBoxAPartirObject());
-	superBox = superBox->unionBox(tabSphere[8]->creeBoxAPartirObject());
-	boundingBoxes.push_back(superBox);*/
 	//maintenant faut faire ca en recurisif
 	auto startBox = high_resolution_clock::now();
 	Box* gigaBox = Box::boxEnglobante(boxHorsCornell);

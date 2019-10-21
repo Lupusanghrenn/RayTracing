@@ -173,7 +173,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RayTracing.cpp" />
     <ClCompile Include="Sphere.cpp" />
-    <ClCompile Include="Vecteur.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Albedo.h" />
@@ -191,6 +190,7 @@
     <ClInclude Include="Rayon.h" />
     <ClInclude Include="RayTracing.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Vecteur.h" />
     <ClInclude Include="Vector3.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

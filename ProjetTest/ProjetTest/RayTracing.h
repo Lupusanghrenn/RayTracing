@@ -3,6 +3,7 @@
 #include "Rayon.h"
 #include "Sphere.h"
 #include "Lumiere.h"
+#include "Vecteur.h"
 #include <optional>
 #include <vector>
 
