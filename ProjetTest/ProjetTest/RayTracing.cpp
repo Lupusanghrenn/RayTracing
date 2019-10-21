@@ -180,7 +180,7 @@ void RayTracing::draw600600() {
 
 	//on ajoute plein de sphere de test
 	for (int nbSphere = 0; nbSphere < nbSphereRandom; nbSphere++) {
-		Vec3<float> vecTmp = Vec3<float>{ (distribution01(generator) * 550.f) , (distribution01(generator) * 550.f), (distribution01(generator) * 550.f)};
+		Vec3<float> vecTmp = Vec3<float>{ 50.f + (distribution01(generator) * 500.f) , 50.f + (distribution01(generator) * 500.f), 50.f + (distribution01(generator) * 500.f)};
 		tabSphere.push_back(new Sphere(vecTmp, 10.f, Albedo(0.5f)));
 	}
 	//Camera ortho
